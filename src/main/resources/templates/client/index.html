@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh" th:replace="~{shared/layout.html :: layout('列表', ~{::body})}" xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<body>
+  <div class="float-right">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <form class="form-inline" action="/client/search" method="get">
+          <div class="input-group">
+            <div class="input-group-append"><label class="input-group-text" for="search">搜索</label></div>
+            <input id="search" name="search" type="text" class="form-control" placeholder="search" />
+            <div class="input-group-prepend"><input type="submit" value="搜索" class="btn btn-outline-secondary" />
+            </div>
+          </div>
+        </form>
+      </li>
+    </ul>
+  </div>
+
+  <h1>列表</h1>
+  <p>
+    <a href="/client/create" sec:authorize="hasAuthority('manager')">创建</a>
+  </p>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>姓名</th>
+        <th>联系方式</th>
+        <th>信用度</th>
+        <th sec:authorize="hasAuthority('manager')"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="s:${model}">
+        <td>[[${s.name}]]</td>
+        <td>[[${s.tel}]]</td>
+        <td>[[${s.credit}]]</td>
+        <td sec:authorize="hasAuthority('manager')">
+          <a th:href="@{/client/edit(id=${s.id})}">编辑</a> |
+          <a th:href="@{/client/details(id=${s.id})}">详情</a> |
+          <a th:href="@{/client/delete(id=${s.id})}">删除</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+
+</html>

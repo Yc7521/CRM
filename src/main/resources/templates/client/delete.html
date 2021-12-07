@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh" th:replace="~{shared/layout.html :: layout('删除', ~{::body})}">
+
+<body>
+<h1>删除</h1>
+
+<h3>你确定要删除这个吗？</h3>
+<div>
+  <h4>客户</h4>
+  <hr/>
+  <dl class="row">
+    <dt class="col-sm-2">姓名</dt>
+    <dd class="col-sm-10">[[${model.name}]]</dd>
+    <dt class="col-sm-2">联系方式</dt>
+    <dd class="col-sm-10">[[${model.tel}]]</dd>
+    <dt class="col-sm-2">信用度</dt>
+    <dd class="col-sm-10">[[${model.credit}]]</dd>
+  </dl>
+
+  <form action="/client/delete" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}"
+           th:value="${_csrf.token}"/>
+    <input type="hidden" id="id" name="id" th:value="${model.id}"/>
+    <input type="submit" value="删除" class="btn btn-danger"/> |
+    <a th:href="@{/client}">返回列表</a>
+  </form>
+</div>
+</body>
+
+</html>
