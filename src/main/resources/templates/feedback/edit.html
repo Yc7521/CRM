@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh"
+      th:replace="~{shared/layout.html :: layout('编辑', ~{::body}, ~{})}">
+
+<body>
+<h1>编辑</h1>
+
+<h4>反馈</h4>
+<hr/>
+<div class="row">
+  <div class="col-md-4">
+    <form action="/feedback/edit" method="post">
+      <input type="hidden" th:name="${_csrf.parameterName}"
+             th:value="${_csrf.token}"/>
+      <input type="hidden" id="id" name="id" th:value="${model.id}"/>
+      <div class="form-group">
+        <label for="userName" class="control-label">反馈人</label>
+        <input id="userName" name="userName" type="text" class="form-control"
+               th:value="${model.userName}" required/>
+      </div>
+      <div class="form-group">
+        <label for="time" class="control-label">反馈时间</label>
+        <input id="time" name="time" type="date" class="form-control"
+               alt="请输入生产时间" th:value="${{model.time}}"
+               required/>
+      </div>
+      <div class="form-group">
+        <label for="content" class="control-label">内容</label>
+        <textarea id="content" name="content" type="textarea"
+                  class="form-control" th:value="${model.content}"
+                  required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="product_id" class="control-label">产品</label>
+        <select id="product_id" name="product_id" class="form-control"
+                th:value="${model.product?.id}" required>
+          <option th:each="s:${products}" value="${s.id}">[[${s.name}]]</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="status" class="control-label">产品</label>
+        <select id="status" name="status" class="form-control"
+                th:value="${model.status}" required>
+          <option value="PENDING" selected>待办</option>
+          <option value="APPROVED">解决</option>
+          <option value="REJECTED">拒绝</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <input type="submit" value="保存" class="btn btn-primary"/>
+      </div>
+      <script>
+        $(function () {
+          $("#time").val("[[${{model.time}}]]");
+          $("#product_id").val("[[${model.status}]]");
+          $("#status").val("[[${model.product?.id}]]");
+        });
+      </script>
+    </form>
+  </div>
+</div>
+
+<div>
+  <a th:href="@{/feedback}">返回列表</a>
+</div>
+</body>
+
+</html>

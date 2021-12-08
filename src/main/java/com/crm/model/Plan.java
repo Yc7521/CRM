@@ -1,7 +1,11 @@
 package com.crm.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import java.util.Date;
+
+import static com.crm.conf.Data.dateTimePattern;
 
 @Entity
 public class Plan {
@@ -22,6 +26,7 @@ public class Plan {
 
     @Temporal(TemporalType.DATE)
     @Column(name = "planned_time", nullable = false)
+    @DateTimeFormat(pattern = dateTimePattern)
     private Date plannedTime = new Date(); // set default value: now()
 
     @Column(name = "finished", nullable = false)

@@ -95,7 +95,7 @@ public class HomeController {
     }
 
     // optional
-    private String getPrincipal() {
+    public static String getPrincipal() {
         final Object principal = SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
 

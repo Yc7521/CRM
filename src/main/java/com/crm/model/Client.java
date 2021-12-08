@@ -6,6 +6,9 @@ import javax.persistence.*;
 
 @Entity
 public class Client implements User {
+    /**
+     * 编号
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)

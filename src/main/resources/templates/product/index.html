@@ -5,31 +5,33 @@
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 
 <body>
-<div th:replace="~{shared/search.html :: search('client', 'search')}">
+<div th:replace="~{shared/search.html :: search('product', 'search')}">
 </div>
 
 <h1>列表</h1>
 <p>
-  <a href="/client/create" sec:authorize="hasAuthority('manager')">创建</a>
+  <a href="/product/create" sec:authorize="hasAuthority('manager')">创建</a>
 </p>
 <table class="table">
   <thead>
   <tr>
-    <th>姓名</th>
-    <th>联系方式</th>
-    <th>信用度</th>
+    <th>产品名称</th>
+    <th>生产时间</th>
+    <th>类别</th>
+    <th>价格</th>
     <th sec:authorize="hasAuthority('manager')"></th>
   </tr>
   </thead>
   <tbody>
   <tr th:each="s:${model}">
     <td>[[${s.name}]]</td>
-    <td>[[${s.tel}]]</td>
-    <td>[[${s.credit}]]</td>
+    <td>[[${s.time}]]</td>
+    <td>[[${s.type}]]</td>
+    <td>[[${s.price}]]</td>
     <td sec:authorize="hasAuthority('manager')">
-      <a th:href="@{/client/edit(id=${s.id})}">编辑</a> |
-      <a th:href="@{/client/details(id=${s.id})}">详情</a> |
-      <a th:href="@{/client/delete(id=${s.id})}">删除</a>
+      <a th:href="@{/product/edit(id=${s.id})}">编辑</a> |
+      <a th:href="@{/product/details(id=${s.id})}">详情</a> |
+      <a th:href="@{/product/delete(id=${s.id})}">删除</a>
     </td>
   </tr>
   </tbody>

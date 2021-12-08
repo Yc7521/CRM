@@ -1,9 +1,15 @@
 package com.crm.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.NumberFormat;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import static com.crm.conf.Data.dateTimePattern;
 
 @Entity
 public class Product {
@@ -17,6 +23,7 @@ public class Product {
 
     @Temporal(TemporalType.DATE)
     @Column(name = "time", nullable = false)
+    @DateTimeFormat(pattern = dateTimePattern)
     private Date time = new Date(); // set default value: now()
 
     @Column(name = "type", nullable = false, length = 20)
@@ -25,6 +32,10 @@ public class Product {
     @NumberFormat(pattern = "0000.00", style = NumberFormat.Style.CURRENCY)
     @Column(name = "price", nullable = false)
     private Double price = .0; // set default value: 0
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER,
+            mappedBy = "product")
+    private Set<Feedback> feedbacks = new LinkedHashSet<>();
 
     public Integer getId() {
         return id;
@@ -64,5 +75,13 @@ public class Product {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public Set<Feedback> getFeedbacks() {
+        return feedbacks;
+    }
+
+    public void setFeedbacks(Set<Feedback> feedbacks) {
+        this.feedbacks = feedbacks;
     }
 }

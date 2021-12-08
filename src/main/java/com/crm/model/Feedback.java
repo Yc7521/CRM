@@ -1,7 +1,11 @@
 package com.crm.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import java.util.Date;
+
+import static com.crm.conf.Data.dateTimePattern;
 
 @Entity
 public class Feedback {
@@ -15,6 +19,7 @@ public class Feedback {
 
     @Temporal(TemporalType.DATE)
     @Column(name = "time", nullable = false)
+    @DateTimeFormat(pattern = dateTimePattern)
     private Date time = new Date(); // set default value: now()
 
     @Column(name = "content", nullable = false)
