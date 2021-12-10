@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh" th:replace="~{shared/layout.html :: layout('详情', ~{::body}, ~{})}">
+
+<body>
+  <h1>详情</h1>
+
+  <div>
+    <h4>计划</h4>
+    <hr />
+    <dl class="row">
+      <dt class="col-sm-2">计划人</dt>
+      <dd class="col-sm-10">[[${model.userName}]]</dd>
+      <dt class="col-sm-2">计划时间</dt>
+      <dd class="col-sm-10">[[${model.time}]]</dd>
+      <dt class="col-sm-2">内容</dt>
+      <dd class="col-sm-10">[[${model.content}]]</dd>
+      <dt class="col-sm-2">产品</dt>
+      <dd class="col-sm-10">[[${model.product?.name}]]</dd>
+      <dt class="col-sm-2">状态</dt>
+      <dd class="col-sm-10">[[${model.status}]]</dd>
+    </dl>
+  </div>
+  <div>
+    <a th:href="@{/plan/edit(id=${model.id})}">编辑</a> |
+    <a th:href="@{/plan}">返回列表</a>
+  </div>
+</body>
+
+</html>

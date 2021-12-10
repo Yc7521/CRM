@@ -15,6 +15,7 @@ public class Plan {
     private Integer id;
 
     @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @JoinColumn(name = "employee_id", nullable = false)
     private Employee employee;
 
     @ManyToOne(cascade = CascadeType.ALL, optional = false)

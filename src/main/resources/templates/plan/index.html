@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh" th:replace="~{shared/layout.html :: layout('列表', ~{::body}, ~{})}" xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<body>
+  <div th:replace="~{shared/search.html :: search('plan', 'search')}">
+  </div>
+
+  <h1>列表</h1>
+  <p>
+    <a href="/plan/create" sec:authorize="hasAuthority('manager')">创建</a>
+  </p>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>计划人</th>
+        <th>计划时间</th>
+        <th>内容</th>
+        <th>产品</th>
+        <th>状态</th>
+        <th sec:authorize="hasAuthority('manager')"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="s:${model}">
+        <td>[[${s.userName}]]</td>
+        <td>[[${s.time}]]</td>
+        <td>[[${s.content}]]</td>
+        <td>[[${s.product?.name}]]</td>
+        <td>[[${s.status}]]</td>
+        <td sec:authorize="hasAuthority('manager')">
+          <a th:href="@{/plan/edit(id=${s.id})}">编辑</a> |
+          <a th:href="@{/plan/details(id=${s.id})}">详情</a> |
+          <a th:href="@{/plan/delete(id=${s.id})}">删除</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+
+</html>

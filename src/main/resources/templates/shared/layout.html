@@ -98,6 +98,13 @@
         window.location.href = this.getAttribute("href");
       }
     }
+
+    // if scroll to bottom then set nav fixed-top
+    // else remove nav fixed-top
+    let nav = document.getElementsByTagName('nav')[0];
+    window.addEventListener('scroll', function (e){
+      window.scrollY > 70 ? nav.classList.add('fixed-top') : nav.classList.remove('fixed-top');
+    });
   })
 </script>
 </body>

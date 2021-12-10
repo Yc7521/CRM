@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh" th:replace="~{shared/layout.html :: layout('列表', ~{::body}, ~{})}" xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<body>
+  <div th:replace="~{shared/search.html :: search('cost', 'search')}">
+  </div>
+
+  <h1>列表</h1>
+  <p>
+    <a href="/cost/create" sec:authorize="hasAuthority('manager')">创建</a>
+  </p>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>订单名称</th>
+        <th>生产时间</th>
+        <th>类别</th>
+        <th>价格</th>
+        <th sec:authorize="hasAuthority('manager')"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="s:${model}">
+        <td>[[${s.name}]]</td>
+        <td>[[${s.time}]]</td>
+        <td>[[${s.type}]]</td>
+        <td>[[${s.price}]]</td>
+        <td sec:authorize="hasAuthority('manager')">
+          <a th:href="@{/cost/edit(id=${s.id})}">编辑</a> |
+          <a th:href="@{/cost/details(id=${s.id})}">详情</a> |
+          <a th:href="@{/cost/delete(id=${s.id})}">删除</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+
+</html>
