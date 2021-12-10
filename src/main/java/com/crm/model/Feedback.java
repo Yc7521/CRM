@@ -7,29 +7,50 @@ import java.util.Date;
 
 import static com.crm.conf.Data.dateTimePattern;
 
+/**
+ * 反馈
+ */
 @Entity
 public class Feedback {
+    /**
+     * 反馈编号
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
+    /**
+     * 反馈人姓名
+     */
     @Column(name = "user_name", nullable = false, length = 20)
     private String userName;
 
+    /**
+     * 反馈时间
+     */
     @Temporal(TemporalType.DATE)
     @Column(name = "time", nullable = false)
     @DateTimeFormat(pattern = dateTimePattern)
     private Date time = new Date(); // set default value: now()
 
+    /**
+     * 反馈内容
+     */
     @Column(name = "content", nullable = false)
     private String content;
 
+    /**
+     * 产品
+     */
     @ManyToOne(cascade = CascadeType.ALL,
             optional = false)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    /**
+     * 解决情况
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private FeedbackStatus status = FeedbackStatus.PENDING;

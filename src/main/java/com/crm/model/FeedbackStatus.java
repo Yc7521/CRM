@@ -1,7 +1,7 @@
 package com.crm.model;
 
 /**
- * 解决情况
+ * 反馈解决情况
  */
 public enum FeedbackStatus {
     /**

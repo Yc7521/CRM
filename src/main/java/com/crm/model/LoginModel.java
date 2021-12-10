@@ -2,9 +2,21 @@ package com.crm.model;
 
 import com.crm.conf.Data;
 
+/**
+ * 登录界面模型
+ */
 public class LoginModel {
+    /**
+     * 用户名
+     */
     public String username;
+    /**
+     * 密码
+     */
     public String password;
+    /**
+     * 用户类型
+     */
     public String type;
 
     public LoginModel() {

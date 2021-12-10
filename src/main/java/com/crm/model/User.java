@@ -8,17 +8,40 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+/**
+ * 用户接口 实现 UserDetails
+ */
 public interface User extends UserDetails {
+    /**
+     * 获取用户名
+     *
+     * @return 用户名
+     */
     @Override
     String getUsername();
 
+    /**
+     * 获取密码
+     *
+     * @return 密码
+     */
     @Override
     String getPassword();
 
+    /**
+     * 获取用户权限
+     *
+     * @return 用户权限
+     */
     default String[] getRoles() {
         return new String[]{this.getClass().getSimpleName()};
     }
 
+    /**
+     * 获取用户权限
+     *
+     * @return 用户权限
+     */
     @Override
     default Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
