@@ -7,6 +7,7 @@ import javax.persistence.*;
 /**
  * 客户
  */
+@SuppressWarnings("unused")
 @Entity
 public class Client implements User {
     /**

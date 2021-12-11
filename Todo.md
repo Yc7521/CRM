@@ -3,7 +3,7 @@
 ## Controllers
 
 * [x] com.crm.controller.HomeController
-* [x] com.crm.controller.clientController
+* [x] com.crm.controller.ClientController
 * [x] com.crm.controller.EmployeeController
 * [x] com.crm.controller.ProductController
 * [x] com.crm.controller.FeedbackController

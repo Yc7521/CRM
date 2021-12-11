@@ -5,6 +5,7 @@ import com.crm.conf.Data;
 /**
  * 员工类型
  */
+@SuppressWarnings("unused")
 public enum EmployeeType {
     /**
      * 员工

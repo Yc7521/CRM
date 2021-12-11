@@ -10,6 +10,7 @@ import static com.crm.conf.Data.dateTimePattern;
 /**
  * 反馈
  */
+@SuppressWarnings("unused")
 @Entity
 public class Feedback {
     /**

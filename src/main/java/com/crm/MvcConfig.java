@@ -7,17 +7,22 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * A configuration class for the Spring MVC.
+ */
 @Configuration
 public class MvcConfig implements WebMvcConfigurer {
 
+    @Override
     public void addViewControllers(ViewControllerRegistry registry) {
 //		registry.addViewController("/home").setViewName("home");
-		registry.addViewController("/test/test").setViewName("test/test");
+        registry.addViewController("/test/test").setViewName("test/test");
     }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("/static/**")
+                .addResourceLocations("classpath:/static/");
 //		WebMvcConfigurer.super.addResourceHandlers(registry);
     }
 

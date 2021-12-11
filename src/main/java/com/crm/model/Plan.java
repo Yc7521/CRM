@@ -10,6 +10,7 @@ import static com.crm.conf.Data.dateTimePattern;
 /**
  * 任务计划
  */
+@SuppressWarnings("unused")
 @Entity
 public class Plan {
     /**

@@ -3,17 +3,17 @@ package com.crm.controller;
 import com.crm.dao.DataSet;
 import com.crm.model.Feedback;
 import com.crm.model.FeedbackStatus;
-import com.crm.model.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Optional;
 
@@ -28,13 +28,29 @@ public class FeedbackController {
         this.dataSet = dataSet;
     }
 
+    /**
+     * Get {@link Feedback} by id
+     *
+     * @param id      the id of {@link Feedback}
+     * @param dataSet data set
+     * @throws HttpClientErrorException if {@link Feedback} not found
+     */
+    static Feedback getFeedback(Integer id, DataSet dataSet) {
+        if (id == null)
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Feedback not found");
+
+        final Optional<Feedback> feedback = dataSet.feedbacks.findById(id);
+        if (feedback.isEmpty())
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Feedback not found");
+
+        return feedback.get();
+    }
+
     @GetMapping({"", "/index"})
-    public String index(@RequestParam(defaultValue = "0") int page,
-                        Model model) {
+    public void index(@RequestParam(defaultValue = "0") int page, Model model) {
         final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
         final Page<Feedback> feedbackPage = dataSet.feedbacks.findAll(id);
         model.addAttribute("model", feedbackPage);
-        return "feedback/index";
     }
 
     @GetMapping("search")
@@ -58,98 +74,52 @@ public class FeedbackController {
     }
 
     @GetMapping("create")
-    public String create(@RequestParam(required = false) Integer id,
-                         Model model) {
+    public void create(@RequestParam(required = false) Integer id, Model model) {
         final Feedback feedback = new Feedback();
         feedback.setUserName(HomeController.getPrincipal());
         feedback.setStatus(FeedbackStatus.PENDING);
         if (id != null) {
-            final Optional<Product> product = dataSet.products.findById(id);
-            if (product.isPresent()) {
-                feedback.setProduct(product.get());
-            } else {
-                return "redirect:/feedback/create";
-            }
+            feedback.setProduct(ProductController.getProduct(id, dataSet));
         }
         model.addAttribute("model", feedback);
         model.addAttribute("products", dataSet.products.findAll());
-        return "feedback/create";
     }
 
     @PostMapping("create")
     public String create(Feedback feedback, @RequestParam Integer product_id) {
-        final Optional<Product> product = dataSet.products.findById(product_id);
-        if (product.isPresent()) {
-            feedback.setProduct(product.get());
-            dataSet.feedbacks.save(feedback);
-            return "redirect:/feedback/";
-        }
-        return "redirect:/notfound";
+        feedback.setProduct(ProductController.getProduct(product_id, dataSet));
+        dataSet.feedbacks.save(feedback);
+        return "redirect:/feedback";
     }
 
     @GetMapping("details")
-    public String details(@RequestParam(required = false) Integer id,
-                          Model model) {
-        if (id == null) return "redirect:/notfound";
-
-        final Optional<Feedback> feedback = dataSet.feedbacks.findById(id);
-        if (feedback.isEmpty()) return "redirect:/notfound";
-
-        model.addAttribute("model", feedback.get());
-        return "feedback/details";
+    public void details(@RequestParam(required = false) Integer id, Model model) {
+        model.addAttribute("model", getFeedback(id, dataSet));
     }
 
     @GetMapping("edit")
-    public String edit(@RequestParam(required = false) Integer id,
-                       Model model) {
-        if (id == null) return "redirect:/notfound";
-
-        final Optional<Feedback> feedback = dataSet.feedbacks.findById(id);
-        if (feedback.isEmpty()) return "redirect:/notfound";
-
-        model.addAttribute("model", feedback.get());
+    public void edit(@RequestParam(required = false) Integer id, Model model) {
+        model.addAttribute("model", getFeedback(id, dataSet));
         model.addAttribute("products", dataSet.products.findAll());
-        return "feedback/edit";
     }
 
     @PostMapping("edit")
-    public String edit(Feedback feedback,
-                       @RequestParam Integer product_id,
-                       Model model) {
-        final Optional<Feedback> data = dataSet.feedbacks.findById(feedback.getId());
-        final Optional<Product> product = dataSet.products.findById(product_id);
-        if (data.isPresent() && product.isPresent()) {
-            final Feedback feedback1 = data.get();
-            feedback1.setUserName(feedback.getUserName());
-            feedback1.setTime(feedback.getTime());
-            feedback1.setContent(feedback.getContent());
-            feedback1.setProduct(product.get());
-            feedback1.setStatus(feedback.getStatus());
-            dataSet.feedbacks.save(feedback1);
-            model.addAttribute("model", feedback1);
-            return "redirect:/feedback";
-        }
-        return "redirect:/notfound";
+    public String edit(Feedback feedback, @RequestParam Integer product_id, Model model) {
+        // check if exists
+        getFeedback(feedback.getId(), dataSet);
+        feedback.setProduct(ProductController.getProduct(product_id, dataSet));
+        dataSet.feedbacks.save(feedback);
+        return "redirect:/feedback";
     }
 
     @GetMapping("delete")
-    public String delete(@RequestParam(required = false) Integer id,
-                         Model model) {
-        if (id == null) return "redirect:/notfound";
-
-        final Optional<Feedback> feedback = dataSet.feedbacks.findById(id);
-        if (feedback.isEmpty()) return "redirect:/notfound";
-
-        model.addAttribute("model", feedback.get());
-        return "feedback/delete";
+    public void delete(@RequestParam(required = false) Integer id, Model model) {
+        model.addAttribute("model", getFeedback(id, dataSet));
     }
 
     @PostMapping("delete")
     public String deleteConfirmed(@RequestParam int id) {
-        final Optional<Feedback> feedback = dataSet.feedbacks.findById(id);
-        if (feedback.isEmpty()) return "redirect:/notfound";
-
-        dataSet.feedbacks.delete(feedback.get());
+        dataSet.feedbacks.delete(getFeedback(id, dataSet));
         return "redirect:/feedback";
     }
 }

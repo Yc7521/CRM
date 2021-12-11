@@ -4,7 +4,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.NumberFormat;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -14,6 +13,7 @@ import static com.crm.conf.Data.dateTimePattern;
 /**
  * 产品
  */
+@SuppressWarnings("unused")
 @Entity
 public class Product {
     /**

@@ -5,6 +5,7 @@ import com.crm.conf.Data;
 /**
  * 登录界面模型
  */
+@SuppressWarnings("unused")
 public class LoginModel {
     /**
      * 用户名

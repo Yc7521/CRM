@@ -21,19 +21,18 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+/**
+ * A configuration class for Spring Security.
+ */
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final Log logger = LogFactory.getLog(WebSecurityConfig.class);
-    private static final String[] stu = {"Student", "Teacher", "Admin"};
-    private static final String[] tea = {"Teacher", "Admin"};
-    private static final String[] admin = {"Admin"};
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.
-                authorizeRequests()
-                .antMatchers("/**").permitAll()
+        // TODO: to use antMatchers to set roles authorization
+        http.authorizeRequests().antMatchers("/**").permitAll()
                 // .antMatchers("/", "/shared/**", "/error/**", "/home", "/login*", "/static/**").permitAll()
                 // .antMatchers("/student", "/student/index", "/student/search").hasAnyAuthority(stu)
                 // .antMatchers("/student/**").hasAnyAuthority(tea)
@@ -43,19 +42,36 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // .antMatchers("/teacher", "/teacher/index", "/teacher/search").hasAnyAuthority(tea)
                 // .antMatchers("/teacher/**").hasAnyAuthority(admin)
                 // .antMatchers("/admin/**").hasAnyAuthority(admin)
-                .anyRequest().authenticated()
-                .and()
-                .exceptionHandling().accessDeniedPage("/error/404")
-                .and()
-        ;
+                .anyRequest().authenticated().and().exceptionHandling()
+                .accessDeniedPage("/error/404").and();
     }
 
+    /**
+     * Register the {@link LoginSuccessHandler} bean for handling login success.
+     *
+     * @return the {@link LoginSuccessHandler} bean
+     */
     @Bean
-    public LogoutSuccessHandler logoutSuccessHandler() { //登出处理
+    public LoginSuccessHandler loginSuccessHandler() { //登入处理
+        return () -> {
+            User user = (User) SecurityContextHolder.getContext().getAuthentication()
+                    .getPrincipal();
+            logger.info("user(%s) : %s login success !  ".formatted(user.getClass()
+                    .getSimpleName(), user.getUsername()));
+        };
+    }
+
+    /**
+     * Register the {@link LogoutSuccessHandler} bean for handling logout success.
+     *
+     * @return a {@link LogoutSuccessHandler}
+     */
+    @Bean
+    public LogoutSuccessHandler logoutSuccessHandler() {
         return () -> {
             try {
-                User user = (User) SecurityContextHolder.getContext()
-                        .getAuthentication().getPrincipal();
+                User user = (User) SecurityContextHolder.getContext().getAuthentication()
+                        .getPrincipal();
                 logger.info("user(%s) : %s logout success !  ".formatted(user.getClass()
                         .getSimpleName(), user.getUsername()));
             } catch (Exception e) {
@@ -64,42 +80,41 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         };
     }
 
-    @Bean
-    public LoginSuccessHandler loginSuccessHandler() { //登入处理
-        return () -> {
-            User user = (User) SecurityContextHolder.getContext()
-                    .getAuthentication().getPrincipal();
-            logger.info("user(%s) : %s login success !  ".formatted(user.getClass()
-                    .getSimpleName(), user.getUsername()));
-        };
-    }
-
-    //密码加密
+    /**
+     * Register the {@link PasswordEncoder} bean for encoding passwords.
+     *
+     * @return a {@link BCryptPasswordEncoder}
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(4);
     }
 
+    /**
+     * Register the {@link UserDetailsService} bean for retrieving user details.
+     *
+     * @return a {@link MyUserDetailsService}
+     */
     @Bean
     @Override
     public UserDetailsService userDetailsService() {
         return new MyUserDetailsService();
-//		UserDetails user =
-//			 User.withDefaultPasswordEncoder()
-//				.username("user")
-//				.password("password")
-//				.roles("USER")
-//				.build();
-//
-//		return new InMemoryUserDetailsManager(user);
     }
 
+    /**
+     * Register the {@link AuthenticationManager} bean for authenticating users.
+     *
+     * @return a {@link AuthenticationManager} from {@link WebSecurityConfigurerAdapter#authenticationManager()}
+     */
     @Bean
     @Override
     protected AuthenticationManager authenticationManager() throws Exception {
         return super.authenticationManager();
     }
 
+    /**
+     * A {@link UserDetailsService} class for retrieving user details.
+     */
     private static class MyUserDetailsService implements UserDetailsService {
         @Autowired
         private DataSet dataSet;
@@ -111,6 +126,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         }
 
         /**
+         * Retrieve user details by user type and username.
+         *
          * @param type [员工, 客户, 管理员]
          * @param name username
          * @return a fully populated user record

@@ -22,10 +22,10 @@ import java.util.ArrayList;
 
 @Controller
 public class HomeController {
-    HttpSession session;
-    AuthenticationManager authenticationManager;
-    LogoutSuccessHandler logoutSuccessHandler;
-    LoginSuccessHandler loginSuccessHandler;
+    final HttpSession session;
+    final AuthenticationManager authenticationManager;
+    final LogoutSuccessHandler logoutSuccessHandler;
+    final LoginSuccessHandler loginSuccessHandler;
 
     public HomeController(HttpSession session,
                           AuthenticationManager authenticationManager,
@@ -37,14 +37,27 @@ public class HomeController {
         this.loginSuccessHandler = loginSuccessHandler;
     }
 
+    /**
+     * optional: get user from {@link SecurityContextHolder}
+     *
+     * @return username
+     */
+    public static String getPrincipal() {
+        final Object principal = SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+
+        if (principal instanceof UserDetails userDetails) {
+            return userDetails.getUsername();
+        }
+        return principal.toString();
+    }
+
     @GetMapping({"", "index"})
-    public String index() {
-        return "index";
+    public void index() {
     }
 
     @GetMapping({"login"})
-    public String login() {
-        return "login";
+    public void login() {
     }
 
     @SuppressWarnings("deprecation")
@@ -64,11 +77,9 @@ public class HomeController {
     }
 
     @GetMapping("logout")
-    public String logout(HttpServletRequest request,
-                         HttpServletResponse response) {
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
         logoutSuccessHandler.run();
-        Authentication auth = SecurityContextHolder.getContext()
-                .getAuthentication();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
@@ -76,10 +87,10 @@ public class HomeController {
     }
 
     @GetMapping("info")
-    public String info(ModelMap result) {
+    public void info(ModelMap result) {
         ArrayList<InfoModel> list = new ArrayList<>();
-        final Object user = SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
+        final Object user = SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
         if (user instanceof Client client) {
             list.add(new InfoModel("姓名", client.getName()));
             list.add(new InfoModel("联系方式", client.getTel()));
@@ -91,17 +102,5 @@ public class HomeController {
             list.add(new InfoModel("类别", employee.getEmployeeType()));
         } else throw new IllegalStateException("非法用户: " + user);
         result.addAttribute("model", list);
-        return "info";
-    }
-
-    // optional
-    public static String getPrincipal() {
-        final Object principal = SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
-
-        if (principal instanceof UserDetails userDetails) {
-            return userDetails.getUsername();
-        }
-        return principal.toString();
     }
 }

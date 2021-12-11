@@ -10,6 +10,7 @@ import static com.crm.conf.Data.dateTimePattern;
 /**
  * 消费单
  */
+@SuppressWarnings("unused")
 @Entity
 public class Cost {
     /**

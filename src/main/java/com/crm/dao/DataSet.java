@@ -1,13 +1,51 @@
 package com.crm.dao;
 
-public class DataSet {
-    public ClientRepository clients;
-    public CostRepository costs;
-    public EmployeeRepository employees;
-    public FeedbackRepository feedbacks;
-    public PlanRepository plans;
-    public ProductRepository products;
 
+/**
+ * A data set contains
+ * {@link ClientRepository},
+ * {@link CostRepository},
+ * {@link EmployeeRepository},
+ * {@link FeedbackRepository},
+ * {@link PlanRepository},
+ * {@link ProductRepository}.
+ */
+public class DataSet {
+    /**
+     * A client repository.
+     */
+    public final ClientRepository clients;
+    /**
+     * A cost repository.
+     */
+    public final CostRepository costs;
+    /**
+     * An employee repository.
+     */
+    public final EmployeeRepository employees;
+    /**
+     * A feedback repository.
+     */
+    public final FeedbackRepository feedbacks;
+    /**
+     * A plan repository.
+     */
+    public final PlanRepository plans;
+    /**
+     * A product repository.
+     */
+    public final ProductRepository products;
+
+    /**
+     * Constructor
+     *
+     * @param clients   a client repository
+     * @param costs     a cost repository
+     * @param employees an employee repository
+     * @param feedbacks a feedback repository
+     * @param plans     a plan repository
+     * @param products  a product repository
+     */
     public DataSet(ClientRepository clients,
                    CostRepository costs,
                    EmployeeRepository employees,

@@ -3,12 +3,12 @@ package com.crm.model;
 import org.springframework.format.annotation.NumberFormat;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.Set;
 
 /**
  * 员工 (普通员工或经理)
  */
+@SuppressWarnings("unused")
 @Entity
 public class Employee implements User {
     /**
