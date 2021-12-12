@@ -6,6 +6,7 @@ import com.crm.model.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -19,14 +20,21 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * A controller for the home page.
+ */
 @Controller
 public class HomeController {
-    final HttpSession session;
-    final AuthenticationManager authenticationManager;
-    final LogoutSuccessHandler logoutSuccessHandler;
-    final LoginSuccessHandler loginSuccessHandler;
+    private final HttpSession session;
+    private final AuthenticationManager authenticationManager;
+    private final LogoutSuccessHandler logoutSuccessHandler;
+    private final LoginSuccessHandler loginSuccessHandler;
 
+    /**
+     * Constructor
+     */
     public HomeController(HttpSession session,
                           AuthenticationManager authenticationManager,
                           LogoutSuccessHandler logoutSuccessHandler,
@@ -43,7 +51,7 @@ public class HomeController {
      * @return username
      */
     public static String getPrincipal() {
-        final Object principal = SecurityContextHolder.getContext().getAuthentication()
+        Object principal = SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
 
         if (principal instanceof UserDetails userDetails) {
@@ -52,44 +60,56 @@ public class HomeController {
         return principal.toString();
     }
 
-    @GetMapping({"", "index"})
-    public void index() {
-    }
-
-    @GetMapping({"login"})
+    /**
+     * Login page.
+     */
+    @GetMapping("/login")
     public void login() {
     }
 
+    /**
+     * Login.
+     * Set parameter {@code error} if login failed.
+     * Set session attribute {@code name} if login success.
+     */
     @SuppressWarnings("deprecation")
     @PostMapping("login")
     public String login(LoginModel model) {
         try {
             SecurityContextHolder.getContext()
-                    .setAuthentication(authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(model.getIdentity(), model.getPassword())));
+                    .setAuthentication(this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(model.getIdentity(), model.getPassword())));
 
             // save user to session
-            session.setAttribute("name", getPrincipal());
-            loginSuccessHandler.run();
+            this.session.setAttribute("name", HomeController.getPrincipal());
+            this.loginSuccessHandler.run();
             return "redirect:/index";
-        } catch (Exception ignore) {
+        } catch (final AuthenticationException e) {
             return "redirect:/login?error=" + URLEncoder.encode("用户名或密码错误");
         }
     }
 
+    /**
+     * Logout. Redirect to {@code login} page.
+     */
     @GetMapping("logout")
-    public String logout(HttpServletRequest request, HttpServletResponse response) {
-        logoutSuccessHandler.run();
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    public String logout(HttpServletRequest request,
+                         HttpServletResponse response) {
+        this.logoutSuccessHandler.run();
+        Authentication auth = SecurityContextHolder.getContext()
+                .getAuthentication();
         if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
         return "redirect:/login?logout";
     }
 
+    /**
+     * Info page.
+     */
     @GetMapping("info")
     public void info(ModelMap result) {
-        ArrayList<InfoModel> list = new ArrayList<>();
-        final Object user = SecurityContextHolder.getContext().getAuthentication()
+        List<InfoModel> list = new ArrayList<>(5);
+        Object user = SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
         if (user instanceof Client client) {
             list.add(new InfoModel("姓名", client.getName()));
@@ -99,7 +119,7 @@ public class HomeController {
             list.add(new InfoModel("姓名", employee.getName()));
             list.add(new InfoModel("部门", employee.getDepartment()));
             list.add(new InfoModel("薪水", employee.getSalary()));
-            list.add(new InfoModel("类别", employee.getEmployeeType()));
+            list.add(new InfoModel("类别", employee.getEmployeeType().getDes()));
         } else throw new IllegalStateException("非法用户: " + user);
         result.addAttribute("model", list);
     }

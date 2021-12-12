@@ -46,7 +46,7 @@ public class ProductController {
         if (id == null)
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Product not found");
 
-        final Optional<Product> product = dataSet.products.findById(id);
+        Optional<Product> product = dataSet.products.findById(id);
         if (product.isEmpty())
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Product not found");
 
@@ -55,38 +55,39 @@ public class ProductController {
 
     /**
      * [GET]
-     * mapping to /cost/[index]?page=0
+     * mapping to /product/[index]?page=0
      *
      * @param page a number of page
      */
-    @GetMapping({ "", "/index" })
-    public void index(@RequestParam(defaultValue = "0") int page, Model model) {
-        final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
-        final Page<Product> productPage = dataSet.products.findAll(id);
+    @GetMapping({"", "index"})
+    public String index(@RequestParam(defaultValue = "0") int page,
+                        Model model) {
+        PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
+        Page<Product> productPage = this.dataSet.products.findAll(id);
         model.addAttribute("model", productPage);
+        return "product/index";
     }
 
     /**
      * [GET]
-     * mapping to /cost/search?page=0&search=
+     * mapping to /product/search?page=0&search=
      *
      * @param search the name of {@link Product}
      * @param page   a number of page
      */
     @GetMapping("search")
     public String search(@RequestParam(required = false) String search,
-            @RequestParam(defaultValue = "0") int page,
-            Model model) {
-        if (search.isEmpty())
-            return "redirect:/product";
-        final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
-        model.addAttribute("model", dataSet.products.findAllByNameContains(id, search));
+                         @RequestParam(defaultValue = "0") int page,
+                         Model model) {
+        if (search.isEmpty()) return "redirect:/product";
+        PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
+        model.addAttribute("model", this.dataSet.products.findAllByNameContains(id, search));
         return "product/index";
     }
 
     /**
      * [GET]
-     * mapping to /cost/create?id=0
+     * mapping to /product/create?id=0
      */
     @GetMapping("create")
     public void create(Model model) {
@@ -95,72 +96,75 @@ public class ProductController {
 
     /**
      * [POST]
-     * mapping to /cost/create
+     * mapping to /product/create
      *
      * @param product the {@link Product}
      */
     @PostMapping("create")
     public String create(Product product) {
-        dataSet.products.save(product);
+        this.dataSet.products.save(product);
         return "redirect:/product";
     }
 
     /**
      * [GET]
-     * mapping to /cost/details?id=0
+     * mapping to /product/details?id=0
      *
      * @param id the id of {@link Product}
      */
     @GetMapping("details")
-    public void details(@RequestParam(required = false) Integer id, Model model) {
-        model.addAttribute("model", getProduct(id, dataSet));
+    public void details(@RequestParam(required = false) Integer id,
+                        Model model) {
+        model.addAttribute("model", ProductController.getProduct(id, this.dataSet));
     }
 
     /**
      * [GET]
-     * mapping to /cost/edit?id=0
+     * mapping to /product/edit?id=0
      *
      * @param id the id of {@link Product}
      */
     @GetMapping("edit")
-    public void edit(@RequestParam(required = false) Integer id, Model model) {
-        model.addAttribute("model", getProduct(id, dataSet));
+    public void edit(@RequestParam(required = false) Integer id,
+                     Model model) {
+        model.addAttribute("model", ProductController.getProduct(id, this.dataSet));
     }
 
     /**
      * [POST]
-     * mapping to /cost/edit
+     * mapping to /product/edit
      *
      * @param product the {@link Product}
      */
     @PostMapping("edit")
     public String edit(Product product, Model model) {
         // check if exists
-        getProduct(product.getId(), dataSet);
-        dataSet.products.save(product);
+        ProductController.getProduct(product.getId(), this.dataSet);
+        this.dataSet.products.save(product);
         return "redirect:/product";
     }
 
     /**
      * [GET]
-     * mapping to /cost/delete?id=0
+     * mapping to /product/delete?id=0
      *
      * @param id the id of {@link Product}
      */
     @GetMapping("delete")
-    public void delete(@RequestParam(required = false) Integer id, Model model) {
-        model.addAttribute("model", getProduct(id, dataSet));
+    public void delete(@RequestParam(required = false) Integer id,
+                       Model model) {
+        model.addAttribute("model", ProductController.getProduct(id, this.dataSet));
     }
 
     /**
      * [POST]
-     * mapping to /cost/delete
+     * mapping to /product/delete
      *
      * @param id the id of {@link Product}
      */
     @PostMapping("delete")
     public String deleteConfirmed(@RequestParam int id) {
-        dataSet.products.delete(getProduct(id, dataSet));
+        this.dataSet.products.delete(ProductController.getProduct(id, this.dataSet));
         return "redirect:/product";
     }
 }

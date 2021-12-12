@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="zh" th:replace="~{shared/layout.html :: layout(~{::title}, ~{::body}, ~{})}">
+
+<head>
+  <title>错误</title>
+</head>
+
+<body>
+<h1>发生错误</h1>
+<p>status：<span th:text="${status}"></span></p>
+<p>error：<span th:text="${error}"></span></p>
+<p>timestamp：<span th:text="${timestamp}"></span></p>
+<p>message：<span th:text="${message}"></span></p>
+<button class="btn btn-primary" onclick="history.back();">返回</button>
+</body>
+
+</html>

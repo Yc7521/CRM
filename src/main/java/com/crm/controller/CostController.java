@@ -50,7 +50,7 @@ public class CostController {
         if (id == null)
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Cost not found");
 
-        final Optional<Cost> cost = dataSet.costs.findById(id);
+        Optional<Cost> cost = dataSet.costs.findById(id);
         if (cost.isEmpty())
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Cost not found");
 
@@ -63,11 +63,12 @@ public class CostController {
      *
      * @param page a number of page
      */
-    @GetMapping({"", "/index"})
-    public void index(@RequestParam(defaultValue = "0") int page, Model model) {
-        final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
-        final Page<Cost> costPage = dataSet.costs.findAll(id);
+    @GetMapping({"", "index"})
+    public String index(@RequestParam(defaultValue = "0") int page, Model model) {
+        PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
+        Page<Cost> costPage = this.dataSet.costs.findAll(id);
         model.addAttribute("model", costPage);
+        return "cost/index";
     }
 
     /**
@@ -82,8 +83,8 @@ public class CostController {
                          @RequestParam(defaultValue = "0") int page,
                          Model model) {
         if (search.isEmpty()) return "redirect:/cost";
-        final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
-        model.addAttribute("model", dataSet.costs.findAllByEmployee_Name(id, search));
+        PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
+        model.addAttribute("model", this.dataSet.costs.findAllByEmployee_Name(id, search));
         return "cost/index";
     }
 
@@ -101,8 +102,8 @@ public class CostController {
                                    @RequestParam(defaultValue = "0") int page,
                                    Model model) {
         if (search == null) return "redirect:/cost";
-        final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
-        model.addAttribute("model", dataSet.costs.findAllByEmployee_Id(id, search));
+        PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
+        model.addAttribute("model", this.dataSet.costs.findAllByEmployee_Id(id, search));
         return "cost/index";
     }
 
@@ -114,9 +115,9 @@ public class CostController {
      */
     @GetMapping("create")
     public void create(@RequestParam(required = false) Integer id, Model model) {
-        final Cost cost = new Cost();
+        Cost cost = new Cost();
         // get a user who is logged in
-        final Object principal = SecurityContextHolder.getContext().getAuthentication()
+        Object principal = SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
         if (principal instanceof Client client) {
             cost.setClient(client);
@@ -124,12 +125,12 @@ public class CostController {
             cost.setEmployee(employee);
         }
 
-        if (id != null) cost.setProduct(ProductController.getProduct(id, dataSet));
+        if (id != null) cost.setProduct(ProductController.getProduct(id, this.dataSet));
 
         model.addAttribute("model", cost);
-        model.addAttribute("clients", dataSet.clients.findAll());
-        model.addAttribute("products", dataSet.products.findAll());
-        model.addAttribute("employees", dataSet.employees.findAll());
+        model.addAttribute("clients", this.dataSet.clients.findAll());
+        model.addAttribute("products", this.dataSet.products.findAll());
+        model.addAttribute("employees", this.dataSet.employees.findAll());
     }
 
     /**
@@ -146,10 +147,10 @@ public class CostController {
                          @RequestParam Integer client_id,
                          @RequestParam Integer product_id,
                          @RequestParam Integer employee_id) {
-        cost.setClient(ClientController.getClient(client_id, dataSet));
-        cost.setProduct(ProductController.getProduct(product_id, dataSet));
-        cost.setEmployee(EmployeeController.getEmployee(employee_id, dataSet));
-        dataSet.costs.save(cost);
+        cost.setClient(ClientController.getClient(client_id, this.dataSet));
+        cost.setProduct(ProductController.getProduct(product_id, this.dataSet));
+        cost.setEmployee(EmployeeController.getEmployee(employee_id, this.dataSet));
+        this.dataSet.costs.save(cost);
         return "redirect:/cost";
     }
 
@@ -161,7 +162,7 @@ public class CostController {
      */
     @GetMapping("details")
     public void details(@RequestParam(required = false) Integer id, Model model) {
-        final Cost cost1 = getCost(id, dataSet);
+        Cost cost1 = CostController.getCost(id, this.dataSet);
         model.addAttribute("model", cost1);
     }
 
@@ -173,11 +174,11 @@ public class CostController {
      */
     @GetMapping("edit")
     public void edit(@RequestParam(required = false) Integer id, Model model) {
-        final Cost cost = getCost(id, dataSet);
+        Cost cost = CostController.getCost(id, this.dataSet);
         model.addAttribute("model", cost);
-        model.addAttribute("clients", dataSet.clients.findAll());
-        model.addAttribute("products", dataSet.products.findAll());
-        model.addAttribute("employees", dataSet.employees.findAll());
+        model.addAttribute("clients", this.dataSet.clients.findAll());
+        model.addAttribute("products", this.dataSet.products.findAll());
+        model.addAttribute("employees", this.dataSet.employees.findAll());
     }
 
     /**
@@ -196,11 +197,11 @@ public class CostController {
                        @RequestParam Integer employee_id,
                        Model model) {
         // check if exists
-        getCost(cost.getId(), dataSet);
-        cost.setClient(ClientController.getClient(client_id, dataSet));
-        cost.setProduct(ProductController.getProduct(product_id, dataSet));
-        cost.setEmployee(EmployeeController.getEmployee(employee_id, dataSet));
-        dataSet.costs.save(cost);
+        CostController.getCost(cost.getId(), this.dataSet);
+        cost.setClient(ClientController.getClient(client_id, this.dataSet));
+        cost.setProduct(ProductController.getProduct(product_id, this.dataSet));
+        cost.setEmployee(EmployeeController.getEmployee(employee_id, this.dataSet));
+        this.dataSet.costs.save(cost);
         return "redirect:/cost";
     }
 
@@ -212,7 +213,7 @@ public class CostController {
      */
     @GetMapping("delete")
     public void delete(@RequestParam(required = false) Integer id, Model model) {
-        model.addAttribute("model", getCost(id, dataSet));
+        model.addAttribute("model", CostController.getCost(id, this.dataSet));
     }
 
     /**
@@ -223,7 +224,7 @@ public class CostController {
      */
     @PostMapping("delete")
     public String deleteConfirmed(@RequestParam int id) {
-        dataSet.costs.delete(getCost(id, dataSet));
+        this.dataSet.costs.delete(CostController.getCost(id, this.dataSet));
         return "redirect:/cost";
     }
 }

@@ -19,12 +19,20 @@ import java.util.Optional;
 
 import static com.crm.conf.Data.maxSize;
 
+/**
+ * A controller for the client page.
+ */
 @Controller
 @RequestMapping("client")
 public class ClientController {
     private final PasswordEncoder passwordEncoder;
     private final DataSet dataSet;
 
+    /**
+     * Constructor
+     *
+     * @param dataSet a {@link DataSet}
+     */
     public ClientController(DataSet dataSet, PasswordEncoder passwordEncoder) {
         this.dataSet = dataSet;
         this.passwordEncoder = passwordEncoder;
@@ -41,68 +49,123 @@ public class ClientController {
         if (id == null)
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Client not found");
 
-        final Optional<Client> client = dataSet.clients.findById(id);
+        Optional<Client> client = dataSet.clients.findById(id);
         if (client.isEmpty())
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Client not found");
 
         return client.get();
     }
 
-    @GetMapping({"", "/index"})
-    public void index(@RequestParam(defaultValue = "0") int page, Model model) {
-        final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
-        final Page<Client> clientPage = dataSet.clients.findAll(id);
+    /**
+     * [GET]
+     * mapping to /client/[index]?page=0
+     *
+     * @param page a number of page
+     * @return
+     */
+    @GetMapping({"", "index"})
+    public String index(@RequestParam(defaultValue = "0") int page, Model model) {
+        PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
+        Page<Client> clientPage = this.dataSet.clients.findAll(id);
         model.addAttribute("model", clientPage);
+        return "client/index";
     }
 
+    /**
+     * [GET]
+     * mapping to /client/search?page=0&search=
+     *
+     * @param search the name of {@link Client}
+     * @param page   a number of page
+     */
     @GetMapping("search")
     public String search(@RequestParam(required = false) String search,
                          @RequestParam(defaultValue = "0") int page,
                          Model model) {
         if (search.isEmpty()) return "redirect:/client";
-        final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
-        model.addAttribute("model", dataSet.clients.findAllByNameContains(id, search));
+        PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
+        model.addAttribute("model", this.dataSet.clients.findAllByNameContains(id, search));
         return "client/index";
     }
 
+    /**
+     * [GET]
+     * mapping to /client/create?id=0
+     */
     @GetMapping("create")
     public void create(Model model) {
         model.addAttribute("model", new Client());
     }
 
+    /**
+     * [POST]
+     * mapping to /client/create
+     *
+     * @param client the {@link Client}
+     */
     @PostMapping("create")
     public String create(Client client) {
-        client.setPassword(passwordEncoder.encode(client.getPassword()));
-        dataSet.clients.save(client);
+        client.setPassword(this.passwordEncoder.encode(client.getPassword()));
+        this.dataSet.clients.save(client);
         return "redirect:/client";
     }
 
+    /**
+     * [GET]
+     * mapping to /client/details?id=0
+     *
+     * @param id the id of {@link Client}
+     */
     @GetMapping("details")
     public void details(@RequestParam(required = false) Integer id, Model model) {
-        model.addAttribute("model", getClient(id, dataSet));
+        model.addAttribute("model", ClientController.getClient(id, this.dataSet));
     }
 
+    /**
+     * [GET]
+     * mapping to /client/edit?id=0
+     *
+     * @param id the id of {@link Client}
+     */
     @GetMapping("edit")
     public void edit(@RequestParam(required = false) Integer id, Model model) {
-        model.addAttribute("model", getClient(id, dataSet));
+        model.addAttribute("model", ClientController.getClient(id, this.dataSet));
     }
 
+    /**
+     * [POST]
+     * mapping to /client/edit
+     *
+     * @param client the {@link Client}
+     */
     @PostMapping("edit")
     public String edit(Client client, Model model) {
         // check if exists
-        getClient(client.getId(), dataSet);
-        dataSet.clients.save(client);
+        ClientController.getClient(client.getId(), this.dataSet);
+        this.dataSet.clients.save(client);
         return "redirect:/client";
     }
 
+    /**
+     * [GET]
+     * mapping to /client/delete?id=0
+     *
+     * @param id the id of {@link Client}
+     */
     @GetMapping("delete")
     public void delete(@RequestParam(required = false) Integer id, Model model) {
-        model.addAttribute("model", getClient(id, dataSet));
+        model.addAttribute("model", ClientController.getClient(id, this.dataSet));
     }
 
+    /**
+     * [POST]
+     * mapping to /client/delete
+     *
+     * @param id the id of {@link Client}
+     */
     @PostMapping("delete")
     public String deleteConfirmed(@RequestParam int id) {
-        dataSet.clients.delete(getClient(id, dataSet));
+        this.dataSet.clients.delete(ClientController.getClient(id, this.dataSet));
         return "redirect:/client";
     }
 }

@@ -19,12 +19,20 @@ import java.util.Optional;
 
 import static com.crm.conf.Data.maxSize;
 
+/**
+ * A controller for the employee page.
+ */
 @Controller
 @RequestMapping("employee")
 public class EmployeeController {
     private final DataSet dataSet;
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * Constructor
+     *
+     * @param dataSet a {@link DataSet}
+     */
     public EmployeeController(DataSet dataSet, PasswordEncoder passwordEncoder) {
         this.dataSet = dataSet;
         this.passwordEncoder = passwordEncoder;
@@ -41,68 +49,122 @@ public class EmployeeController {
         if (id == null)
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Employee not found");
 
-        final Optional<Employee> employee = dataSet.employees.findById(id);
+        Optional<Employee> employee = dataSet.employees.findById(id);
         if (employee.isEmpty())
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Employee not found");
 
         return employee.get();
     }
 
-    @GetMapping({"", "/index"})
-    public void index(@RequestParam(defaultValue = "0") int page, Model model) {
-        final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
-        final Page<Employee> employeePage = dataSet.employees.findAll(id);
+    /**
+     * [GET]
+     * mapping to /employee/[index]?page=0
+     *
+     * @param page a number of page
+     */
+    @GetMapping({"", "index"})
+    public String index(@RequestParam(defaultValue = "0") int page, Model model) {
+        PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
+        Page<Employee> employeePage = this.dataSet.employees.findAll(id);
         model.addAttribute("model", employeePage);
+        return "employee/index";
     }
 
+    /**
+     * [GET]
+     * mapping to /employee/search?page=0&search=
+     *
+     * @param search the name of {@link Employee}
+     * @param page   a number of page
+     */
     @GetMapping("search")
     public String search(@RequestParam(required = false) String search,
                          @RequestParam(defaultValue = "0") int page,
                          Model model) {
         if (search.isEmpty()) return "redirect:/employee";
-        final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
-        model.addAttribute("model", dataSet.employees.findAllByNameContains(id, search));
+        PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
+        model.addAttribute("model", this.dataSet.employees.findAllByNameContains(id, search));
         return "employee/index";
     }
 
+    /**
+     * [GET]
+     * mapping to /employee/create?id=0
+     */
     @GetMapping("create")
     public void create(Model model) {
         model.addAttribute("model", new Employee());
     }
 
+    /**
+     * [POST]
+     * mapping to /employee/create
+     *
+     * @param employee the {@link Employee}
+     */
     @PostMapping("create")
     public String create(Employee employee) {
-        employee.setPassword(passwordEncoder.encode(employee.getPassword()));
-        dataSet.employees.save(employee);
+        employee.setPassword(this.passwordEncoder.encode(employee.getPassword()));
+        this.dataSet.employees.save(employee);
         return "redirect:/employee";
     }
 
+    /**
+     * [GET]
+     * mapping to /employee/details?id=0
+     *
+     * @param id the id of {@link Employee}
+     */
     @GetMapping("details")
     public void details(@RequestParam(required = false) Integer id, Model model) {
-        model.addAttribute("model", getEmployee(id, dataSet));
+        model.addAttribute("model", EmployeeController.getEmployee(id, this.dataSet));
     }
 
+    /**
+     * [GET]
+     * mapping to /employee/edit?id=0
+     *
+     * @param id the id of {@link Employee}
+     */
     @GetMapping("edit")
     public void edit(@RequestParam(required = false) Integer id, Model model) {
-        model.addAttribute("model", getEmployee(id, dataSet));
+        model.addAttribute("model", EmployeeController.getEmployee(id, this.dataSet));
     }
 
+    /**
+     * [POST]
+     * mapping to /employee/edit
+     *
+     * @param employee the {@link Employee}
+     */
     @PostMapping("edit")
     public String edit(Employee employee, Model model) {
         // check if exists
-        getEmployee(employee.getId(), dataSet);
-        dataSet.employees.save(employee);
+        EmployeeController.getEmployee(employee.getId(), this.dataSet);
+        this.dataSet.employees.save(employee);
         return "redirect:/employee";
     }
 
+    /**
+     * [GET]
+     * mapping to /employee/delete?id=0
+     *
+     * @param id the id of {@link Employee}
+     */
     @GetMapping("delete")
     public void delete(@RequestParam(required = false) Integer id, Model model) {
-        model.addAttribute("model", getEmployee(id, dataSet));
+        model.addAttribute("model", EmployeeController.getEmployee(id, this.dataSet));
     }
 
+    /**
+     * [POST]
+     * mapping to /employee/delete
+     *
+     * @param id the id of {@link Employee}
+     */
     @PostMapping("delete")
     public String deleteConfirmed(@RequestParam int id) {
-        dataSet.employees.delete(getEmployee(id, dataSet));
+        this.dataSet.employees.delete(EmployeeController.getEmployee(id, this.dataSet));
         return "redirect:/employee";
     }
 }
