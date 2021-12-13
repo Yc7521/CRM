@@ -9,6 +9,7 @@
     <div class="col-md-4">
       <form action="/plan/create" method="post">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <input type="hidden" id="id" name="id" th:value="${model.id}" />
         <div class="form-group">
           <label for="employee_id" class="control-label">员工</label>
           <select id="employee_id" name="employee_id" type="text" class="form-control" th:value="${model.employee?.id}" required>
