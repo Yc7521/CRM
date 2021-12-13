@@ -60,8 +60,7 @@ public class ProductController {
      * @param page a number of page
      */
     @GetMapping({"", "index"})
-    public String index(@RequestParam(defaultValue = "0") int page,
-                        Model model) {
+    public String index(@RequestParam(defaultValue = "0") int page, Model model) {
         PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
         Page<Product> productPage = this.dataSet.products.findAll(id);
         model.addAttribute("model", productPage);
@@ -113,8 +112,7 @@ public class ProductController {
      * @param id the id of {@link Product}
      */
     @GetMapping("details")
-    public void details(@RequestParam(required = false) Integer id,
-                        Model model) {
+    public void details(@RequestParam(required = false) Integer id, Model model) {
         model.addAttribute("model", ProductController.getProduct(id, this.dataSet));
     }
 
@@ -125,8 +123,7 @@ public class ProductController {
      * @param id the id of {@link Product}
      */
     @GetMapping("edit")
-    public void edit(@RequestParam(required = false) Integer id,
-                     Model model) {
+    public void edit(@RequestParam(required = false) Integer id, Model model) {
         model.addAttribute("model", ProductController.getProduct(id, this.dataSet));
     }
 
@@ -139,8 +136,12 @@ public class ProductController {
     @PostMapping("edit")
     public String edit(Product product, Model model) {
         // check if exists
-        ProductController.getProduct(product.getId(), this.dataSet);
-        this.dataSet.products.save(product);
+        final Product product1 = ProductController.getProduct(product.getId(), this.dataSet);
+        product1.setName(product.getName());
+        product1.setTime(product.getTime());
+        product1.setType(product.getType());
+        product1.setPrice(product.getPrice());
+        this.dataSet.products.save(product1);
         return "redirect:/product";
     }
 
@@ -151,8 +152,7 @@ public class ProductController {
      * @param id the id of {@link Product}
      */
     @GetMapping("delete")
-    public void delete(@RequestParam(required = false) Integer id,
-                       Model model) {
+    public void delete(@RequestParam(required = false) Integer id, Model model) {
         model.addAttribute("model", ProductController.getProduct(id, this.dataSet));
     }
 

@@ -13,19 +13,19 @@
   <table class="table">
     <thead>
       <tr>
-        <th>订单名称</th>
-        <th>生产时间</th>
-        <th>类别</th>
-        <th>价格</th>
+        <th>客户编号</th>
+        <th>消费时间</th>
+        <th>产品编号</th>
+        <th>员工编号</th>
         <th sec:authorize="hasAuthority('manager')"></th>
       </tr>
     </thead>
     <tbody>
       <tr th:each="s:${model}">
-        <td>[[${s.name}]]</td>
+        <td>[[${s.client?.name}]]</td>
         <td>[[${s.time}]]</td>
-        <td>[[${s.type}]]</td>
-        <td>[[${s.price}]]</td>
+        <td>[[${s.product?.name}]]</td>
+        <td>[[${s.employee?.name}]]</td>
         <td sec:authorize="hasAuthority('manager')">
           <a th:href="@{/cost/edit(id=${s.id})}">编辑</a> |
           <a th:href="@{/cost/details(id=${s.id})}">详情</a> |

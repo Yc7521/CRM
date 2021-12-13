@@ -197,11 +197,12 @@ public class CostController {
                        @RequestParam Integer employee_id,
                        Model model) {
         // check if exists
-        CostController.getCost(cost.getId(), this.dataSet);
-        cost.setClient(ClientController.getClient(client_id, this.dataSet));
-        cost.setProduct(ProductController.getProduct(product_id, this.dataSet));
-        cost.setEmployee(EmployeeController.getEmployee(employee_id, this.dataSet));
-        this.dataSet.costs.save(cost);
+        final Cost cost1 = CostController.getCost(cost.getId(), this.dataSet);
+        cost1.setTime(cost.getTime());
+        cost1.setClient(ClientController.getClient(client_id, this.dataSet));
+        cost1.setProduct(ProductController.getProduct(product_id, this.dataSet));
+        cost1.setEmployee(EmployeeController.getEmployee(employee_id, this.dataSet));
+        this.dataSet.costs.save(cost1);
         return "redirect:/cost";
     }
 

@@ -60,8 +60,7 @@ public class PlanController {
      * @param page a number of page
      */
     @GetMapping({"", "index"})
-    public String index(@RequestParam(defaultValue = "0") int page,
-                        Model model) {
+    public String index(@RequestParam(defaultValue = "0") int page, Model model) {
         PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
         Page<Plan> planPage = this.dataSet.plans.findAll(id);
         model.addAttribute("model", planPage);
@@ -166,8 +165,7 @@ public class PlanController {
      * @param id the id of {@link Plan}
      */
     @GetMapping("details")
-    public void details(@RequestParam(required = false) Integer id,
-                        Model model) {
+    public void details(@RequestParam(required = false) Integer id, Model model) {
         model.addAttribute("model", PlanController.getPlan(id, this.dataSet));
     }
 
@@ -178,8 +176,7 @@ public class PlanController {
      * @param id the id of {@link Plan}
      */
     @GetMapping("edit")
-    public void edit(@RequestParam(required = false) Integer id,
-                     Model model) {
+    public void edit(@RequestParam(required = false) Integer id, Model model) {
         model.addAttribute("model", PlanController.getPlan(id, this.dataSet));
         model.addAttribute("employees", this.dataSet.employees.findAll());
         model.addAttribute("clients", this.dataSet.clients.findAll());
@@ -199,10 +196,13 @@ public class PlanController {
                        @RequestParam Integer client_id,
                        Model model) {
         // check if exists
-        PlanController.getPlan(plan.getId(), this.dataSet);
-        plan.setEmployee(EmployeeController.getEmployee(employee_id, this.dataSet));
-        plan.setClient(ClientController.getClient(client_id, this.dataSet));
-        this.dataSet.plans.save(plan);
+        final Plan plan1 = PlanController.getPlan(plan.getId(), this.dataSet);
+        plan1.setEmployee(EmployeeController.getEmployee(employee_id, this.dataSet));
+        plan1.setClient(ClientController.getClient(client_id, this.dataSet));
+        plan1.setPlannedProfit(plan.getPlannedProfit());
+        plan1.setFinished(plan.getFinished());
+        plan1.setPlanState(plan.getPlanState());
+        this.dataSet.plans.save(plan1);
         return "redirect:/plan";
     }
 
@@ -213,8 +213,7 @@ public class PlanController {
      * @param id the id of {@link Plan}
      */
     @GetMapping("delete")
-    public void delete(@RequestParam(required = false) Integer id,
-                       Model model) {
+    public void delete(@RequestParam(required = false) Integer id, Model model) {
         model.addAttribute("model", PlanController.getPlan(id, this.dataSet));
     }
 

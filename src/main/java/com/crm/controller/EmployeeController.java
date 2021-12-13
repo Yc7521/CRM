@@ -140,8 +140,12 @@ public class EmployeeController {
     @PostMapping("edit")
     public String edit(Employee employee, Model model) {
         // check if exists
-        EmployeeController.getEmployee(employee.getId(), this.dataSet);
-        this.dataSet.employees.save(employee);
+        final Employee employee1 = EmployeeController.getEmployee(employee.getId(), this.dataSet);
+        employee1.setName(employee.getName());
+        employee1.setDepartment(employee.getDepartment());
+        employee1.setSalary(employee.getSalary());
+        employee1.setEmployeeType(employee.getEmployeeType());
+        this.dataSet.employees.save(employee1);
         return "redirect:/employee";
     }
 

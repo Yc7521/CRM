@@ -164,9 +164,13 @@ public class FeedbackController {
     @PostMapping("edit")
     public String edit(Feedback feedback, @RequestParam Integer product_id, Model model) {
         // check if exists
-        FeedbackController.getFeedback(feedback.getId(), this.dataSet);
-        feedback.setProduct(ProductController.getProduct(product_id, this.dataSet));
-        this.dataSet.feedbacks.save(feedback);
+        final Feedback feedback1 = FeedbackController.getFeedback(feedback.getId(), this.dataSet);
+        feedback1.setUserName(feedback.getUserName());
+        feedback1.setTime(feedback.getTime());
+        feedback1.setContent(feedback.getContent());
+        feedback1.setProduct(ProductController.getProduct(product_id, this.dataSet));
+        feedback1.setStatus(feedback.getStatus());
+        this.dataSet.feedbacks.save(feedback1);
         return "redirect:/feedback";
     }
 

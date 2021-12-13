@@ -13,21 +13,23 @@
   <table class="table">
     <thead>
       <tr>
-        <th>计划人</th>
+        <th>员工</th>
+        <th>客户</th>
+        <th>计划利润</th>
         <th>计划时间</th>
-        <th>内容</th>
-        <th>产品</th>
-        <th>状态</th>
+        <th>是否按计划完成</th>
+        <th>实施情况</th>
         <th sec:authorize="hasAuthority('manager')"></th>
       </tr>
     </thead>
     <tbody>
       <tr th:each="s:${model}">
-        <td>[[${s.userName}]]</td>
-        <td>[[${s.time}]]</td>
-        <td>[[${s.content}]]</td>
-        <td>[[${s.product?.name}]]</td>
-        <td>[[${s.status}]]</td>
+        <td>[[${s.employee?.name}]]</td>
+        <td>[[${s.client?.name}]]</td>
+        <td>[[${s.plannedProfit}]]</td>
+        <td>[[${{s.plannedTime}}]]</td>
+        <td>[[${s.finished}]]</td>
+        <td>[[${s.planState}]]</td>
         <td sec:authorize="hasAuthority('manager')">
           <a th:href="@{/plan/edit(id=${s.id})}">编辑</a> |
           <a th:href="@{/plan/details(id=${s.id})}">详情</a> |

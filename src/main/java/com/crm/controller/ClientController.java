@@ -141,8 +141,11 @@ public class ClientController {
     @PostMapping("edit")
     public String edit(Client client, Model model) {
         // check if exists
-        ClientController.getClient(client.getId(), this.dataSet);
-        this.dataSet.clients.save(client);
+        final Client client1 = ClientController.getClient(client.getId(), this.dataSet);
+        client1.setName(client.getName());
+        client1.setTel(client.getTel());
+        client1.setCredit(client.getCredit());
+        this.dataSet.clients.save(client1);
         return "redirect:/client";
     }
 
