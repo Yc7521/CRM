@@ -35,7 +35,7 @@ public class CostController {
      *
      * @param dataSet a {@link DataSet}
      */
-    public CostController(DataSet dataSet) {
+    public CostController(final DataSet dataSet) {
         this.dataSet = dataSet;
     }
 
@@ -46,11 +46,11 @@ public class CostController {
      * @param dataSet data set
      * @throws HttpClientErrorException if {@link Cost} not found
      */
-    static Cost getCost(Integer id, DataSet dataSet) {
+    static Cost getCost(final Integer id, final DataSet dataSet) {
         if (id == null)
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Cost not found");
 
-        Optional<Cost> cost = dataSet.costs.findById(id);
+        final Optional<Cost> cost = dataSet.costs.findById(id);
         if (cost.isEmpty())
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Cost not found");
 
@@ -64,9 +64,9 @@ public class CostController {
      * @param page a number of page
      */
     @GetMapping({"", "index"})
-    public String index(@RequestParam(defaultValue = "0") int page, Model model) {
-        PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
-        Page<Cost> costPage = this.dataSet.costs.findAll(id);
+    public String index(@RequestParam(defaultValue = "0") final int page, final Model model) {
+        final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
+        final Page<Cost> costPage = dataSet.costs.findAll(id);
         model.addAttribute("model", costPage);
         return "cost/index";
     }
@@ -79,12 +79,12 @@ public class CostController {
      * @param page   a number of page
      */
     @GetMapping("search")
-    public String search(@RequestParam(required = false) String search,
-                         @RequestParam(defaultValue = "0") int page,
-                         Model model) {
+    public String search(@RequestParam(required = false) final String search,
+                         @RequestParam(defaultValue = "0") final int page,
+                         final Model model) {
         if (search.isEmpty()) return "redirect:/cost";
-        PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
-        model.addAttribute("model", this.dataSet.costs.findAllByEmployee_Name(id, search));
+        final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
+        model.addAttribute("model", dataSet.costs.findAllByEmployee_Name(id, search));
         return "cost/index";
     }
 
@@ -98,12 +98,12 @@ public class CostController {
      * @param page   a number of page
      */
     @GetMapping("searchEmployeeId")
-    public String searchEmployeeId(@RequestParam(required = false) Integer search,
-                                   @RequestParam(defaultValue = "0") int page,
-                                   Model model) {
+    public String searchEmployeeId(@RequestParam(required = false) final Integer search,
+                                   @RequestParam(defaultValue = "0") final int page,
+                                   final Model model) {
         if (search == null) return "redirect:/cost";
-        PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
-        model.addAttribute("model", this.dataSet.costs.findAllByEmployee_Id(id, search));
+        final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
+        model.addAttribute("model", dataSet.costs.findAllByEmployee_Id(id, search));
         return "cost/index";
     }
 
@@ -114,10 +114,10 @@ public class CostController {
      * @param id the id of {@link Product}
      */
     @GetMapping("create")
-    public void create(@RequestParam(required = false) Integer id, Model model) {
-        Cost cost = new Cost();
+    public void create(@RequestParam(required = false) final Integer id, final Model model) {
+        final Cost cost = new Cost();
         // get a user who is logged in
-        Object principal = SecurityContextHolder.getContext().getAuthentication()
+        final Object principal = SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
         if (principal instanceof Client client) {
             cost.setClient(client);
@@ -125,12 +125,12 @@ public class CostController {
             cost.setEmployee(employee);
         }
 
-        if (id != null) cost.setProduct(ProductController.getProduct(id, this.dataSet));
+        if (id != null) cost.setProduct(ProductController.getProduct(id, dataSet));
 
         model.addAttribute("model", cost);
-        model.addAttribute("clients", this.dataSet.clients.findAll());
-        model.addAttribute("products", this.dataSet.products.findAll());
-        model.addAttribute("employees", this.dataSet.employees.findAll());
+        model.addAttribute("clients", dataSet.clients.findAll());
+        model.addAttribute("products", dataSet.products.findAll());
+        model.addAttribute("employees", dataSet.employees.findAll());
     }
 
     /**
@@ -143,14 +143,14 @@ public class CostController {
      * @param employee_id the id of {@link Employee}
      */
     @PostMapping("create")
-    public String create(Cost cost,
-                         @RequestParam Integer client_id,
-                         @RequestParam Integer product_id,
-                         @RequestParam Integer employee_id) {
-        cost.setClient(ClientController.getClient(client_id, this.dataSet));
-        cost.setProduct(ProductController.getProduct(product_id, this.dataSet));
-        cost.setEmployee(EmployeeController.getEmployee(employee_id, this.dataSet));
-        this.dataSet.costs.save(cost);
+    public String create(final Cost cost,
+                         @RequestParam final Integer client_id,
+                         @RequestParam final Integer product_id,
+                         @RequestParam final Integer employee_id) {
+        cost.setClient(ClientController.getClient(client_id, dataSet));
+        cost.setProduct(ProductController.getProduct(product_id, dataSet));
+        cost.setEmployee(EmployeeController.getEmployee(employee_id, dataSet));
+        dataSet.costs.save(cost);
         return "redirect:/cost";
     }
 
@@ -161,8 +161,8 @@ public class CostController {
      * @param id the id of {@link Cost}
      */
     @GetMapping("details")
-    public void details(@RequestParam(required = false) Integer id, Model model) {
-        Cost cost1 = CostController.getCost(id, this.dataSet);
+    public void details(@RequestParam(required = false) final Integer id, final Model model) {
+        final Cost cost1 = getCost(id, dataSet);
         model.addAttribute("model", cost1);
     }
 
@@ -173,12 +173,12 @@ public class CostController {
      * @param id the id of {@link Cost}
      */
     @GetMapping("edit")
-    public void edit(@RequestParam(required = false) Integer id, Model model) {
-        Cost cost = CostController.getCost(id, this.dataSet);
+    public void edit(@RequestParam(required = false) final Integer id, final Model model) {
+        final Cost cost = getCost(id, dataSet);
         model.addAttribute("model", cost);
-        model.addAttribute("clients", this.dataSet.clients.findAll());
-        model.addAttribute("products", this.dataSet.products.findAll());
-        model.addAttribute("employees", this.dataSet.employees.findAll());
+        model.addAttribute("clients", dataSet.clients.findAll());
+        model.addAttribute("products", dataSet.products.findAll());
+        model.addAttribute("employees", dataSet.employees.findAll());
     }
 
     /**
@@ -191,18 +191,18 @@ public class CostController {
      * @param employee_id the id of {@link Employee}
      */
     @PostMapping("edit")
-    public String edit(Cost cost,
-                       @RequestParam Integer client_id,
-                       @RequestParam Integer product_id,
-                       @RequestParam Integer employee_id,
-                       Model model) {
+    public String edit(final Cost cost,
+                       @RequestParam final Integer client_id,
+                       @RequestParam final Integer product_id,
+                       @RequestParam final Integer employee_id,
+                       final Model model) {
         // check if exists
-        final Cost cost1 = CostController.getCost(cost.getId(), this.dataSet);
+        Cost cost1 = getCost(cost.getId(), dataSet);
         cost1.setTime(cost.getTime());
-        cost1.setClient(ClientController.getClient(client_id, this.dataSet));
-        cost1.setProduct(ProductController.getProduct(product_id, this.dataSet));
-        cost1.setEmployee(EmployeeController.getEmployee(employee_id, this.dataSet));
-        this.dataSet.costs.save(cost1);
+        cost1.setClient(ClientController.getClient(client_id, dataSet));
+        cost1.setProduct(ProductController.getProduct(product_id, dataSet));
+        cost1.setEmployee(EmployeeController.getEmployee(employee_id, dataSet));
+        dataSet.costs.save(cost1);
         return "redirect:/cost";
     }
 
@@ -213,8 +213,8 @@ public class CostController {
      * @param id the id of {@link Cost}
      */
     @GetMapping("delete")
-    public void delete(@RequestParam(required = false) Integer id, Model model) {
-        model.addAttribute("model", CostController.getCost(id, this.dataSet));
+    public void delete(@RequestParam(required = false) final Integer id, final Model model) {
+        model.addAttribute("model", getCost(id, dataSet));
     }
 
     /**
@@ -224,8 +224,8 @@ public class CostController {
      * @param id the id of {@link Cost}
      */
     @PostMapping("delete")
-    public String deleteConfirmed(@RequestParam int id) {
-        this.dataSet.costs.delete(CostController.getCost(id, this.dataSet));
+    public String deleteConfirmed(@RequestParam final int id) {
+        dataSet.costs.delete(getCost(id, dataSet));
         return "redirect:/cost";
     }
 }

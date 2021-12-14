@@ -35,10 +35,10 @@ public class HomeController {
     /**
      * Constructor
      */
-    public HomeController(HttpSession session,
-                          AuthenticationManager authenticationManager,
-                          LogoutSuccessHandler logoutSuccessHandler,
-                          LoginSuccessHandler loginSuccessHandler) {
+    public HomeController(final HttpSession session,
+                          final AuthenticationManager authenticationManager,
+                          final LogoutSuccessHandler logoutSuccessHandler,
+                          final LoginSuccessHandler loginSuccessHandler) {
         this.session = session;
         this.authenticationManager = authenticationManager;
         this.logoutSuccessHandler = logoutSuccessHandler;
@@ -51,7 +51,7 @@ public class HomeController {
      * @return username
      */
     public static String getPrincipal() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication()
+        final Object principal = SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
 
         if (principal instanceof UserDetails userDetails) {
@@ -74,16 +74,16 @@ public class HomeController {
      */
     @SuppressWarnings("deprecation")
     @PostMapping("login")
-    public String login(LoginModel model) {
+    public String login(final LoginModel model) {
         try {
             SecurityContextHolder.getContext()
-                    .setAuthentication(this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(model.getIdentity(), model.getPassword())));
+                    .setAuthentication(authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(model.getIdentity(), model.getPassword())));
 
             // save user to session
-            this.session.setAttribute("name", HomeController.getPrincipal());
-            this.loginSuccessHandler.run();
+            session.setAttribute("name", getPrincipal());
+            loginSuccessHandler.run();
             return "redirect:/index";
-        } catch (final AuthenticationException e) {
+        } catch (AuthenticationException e) {
             return "redirect:/login?error=" + URLEncoder.encode("用户名或密码错误");
         }
     }
@@ -92,11 +92,9 @@ public class HomeController {
      * Logout. Redirect to {@code login} page.
      */
     @GetMapping("logout")
-    public String logout(HttpServletRequest request,
-                         HttpServletResponse response) {
-        this.logoutSuccessHandler.run();
-        Authentication auth = SecurityContextHolder.getContext()
-                .getAuthentication();
+    public String logout(final HttpServletRequest request, final HttpServletResponse response) {
+        logoutSuccessHandler.run();
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
@@ -107,19 +105,23 @@ public class HomeController {
      * Info page.
      */
     @GetMapping("info")
-    public void info(ModelMap result) {
-        List<InfoModel> list = new ArrayList<>(5);
-        Object user = SecurityContextHolder.getContext().getAuthentication()
+    public void info(final ModelMap result) {
+        final List<InfoModel> list = new ArrayList<>(5);
+        final Object user = SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
         if (user instanceof Client client) {
+            result.addAttribute("id", client.getId());
             list.add(new InfoModel("姓名", client.getName()));
             list.add(new InfoModel("联系方式", client.getTel()));
             list.add(new InfoModel("信用度", client.getCredit()));
+            result.addAttribute("role", "client");
         } else if (user instanceof Employee employee) {
+            result.addAttribute("id", employee.getId());
             list.add(new InfoModel("姓名", employee.getName()));
             list.add(new InfoModel("部门", employee.getDepartment()));
             list.add(new InfoModel("薪水", employee.getSalary()));
             list.add(new InfoModel("类别", employee.getEmployeeType().getDes()));
+            result.addAttribute("role", "employee");
         } else throw new IllegalStateException("非法用户: " + user);
         result.addAttribute("model", list);
     }

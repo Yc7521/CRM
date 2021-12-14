@@ -32,7 +32,7 @@ public class FeedbackController {
      *
      * @param dataSet a {@link DataSet}
      */
-    public FeedbackController(DataSet dataSet) {
+    public FeedbackController(final DataSet dataSet) {
         this.dataSet = dataSet;
     }
 
@@ -43,11 +43,11 @@ public class FeedbackController {
      * @param dataSet data set
      * @throws HttpClientErrorException if {@link Feedback} not found
      */
-    static Feedback getFeedback(Integer id, DataSet dataSet) {
+    static Feedback getFeedback(final Integer id, final DataSet dataSet) {
         if (id == null)
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Feedback not found");
 
-        Optional<Feedback> feedback = dataSet.feedbacks.findById(id);
+        final Optional<Feedback> feedback = dataSet.feedbacks.findById(id);
         if (feedback.isEmpty())
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Feedback not found");
 
@@ -61,9 +61,9 @@ public class FeedbackController {
      * @param page a number of page
      */
     @GetMapping({"", "index"})
-    public String index(@RequestParam(defaultValue = "0") int page, Model model) {
-        PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
-        Page<Feedback> feedbackPage = this.dataSet.feedbacks.findAll(id);
+    public String index(@RequestParam(defaultValue = "0") final int page, final Model model) {
+        final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
+        final Page<Feedback> feedbackPage = dataSet.feedbacks.findAll(id);
         model.addAttribute("model", feedbackPage);
         return "feedback/index";
     }
@@ -76,12 +76,12 @@ public class FeedbackController {
      * @param page   a number of page
      */
     @GetMapping("search")
-    public String search(@RequestParam(required = false) String search,
-                         @RequestParam(defaultValue = "0") int page,
-                         Model model) {
+    public String search(@RequestParam(required = false) final String search,
+                         @RequestParam(defaultValue = "0") final int page,
+                         final Model model) {
         if (search.isEmpty()) return "redirect:/feedback";
-        PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
-        model.addAttribute("model", this.dataSet.feedbacks.findAllByProduct_Name(id, search));
+        final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
+        model.addAttribute("model", dataSet.feedbacks.findAllByProduct_Name(id, search));
         return "feedback/index";
     }
 
@@ -93,12 +93,12 @@ public class FeedbackController {
      * @param page   a number of page
      */
     @GetMapping("searchId")
-    public String searchId(@RequestParam(required = false) Integer search,
-                           @RequestParam(defaultValue = "0") int page,
-                           Model model) {
+    public String searchId(@RequestParam(required = false) final Integer search,
+                           @RequestParam(defaultValue = "0") final int page,
+                           final Model model) {
         if (search == null) return "redirect:/feedback";
-        PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
-        model.addAttribute("model", this.dataSet.feedbacks.findAllByProduct_Id(id, search));
+        final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
+        model.addAttribute("model", dataSet.feedbacks.findAllByProduct_Id(id, search));
         return "feedback/index";
     }
 
@@ -107,14 +107,14 @@ public class FeedbackController {
      * mapping to /feedback/create?id=0
      */
     @GetMapping("create")
-    public void create(@RequestParam(required = false) Integer id, Model model) {
-        Feedback feedback = new Feedback();
+    public void create(@RequestParam(required = false) final Integer id, final Model model) {
+        final Feedback feedback = new Feedback();
         feedback.setUserName(HomeController.getPrincipal());
         if (id != null) {
-            feedback.setProduct(ProductController.getProduct(id, this.dataSet));
+            feedback.setProduct(ProductController.getProduct(id, dataSet));
         }
         model.addAttribute("model", feedback);
-        model.addAttribute("products", this.dataSet.products.findAll());
+        model.addAttribute("products", dataSet.products.findAll());
     }
 
     /**
@@ -125,9 +125,9 @@ public class FeedbackController {
      * @param product_id the id of {@link Product}
      */
     @PostMapping("create")
-    public String create(Feedback feedback, @RequestParam Integer product_id) {
-        feedback.setProduct(ProductController.getProduct(product_id, this.dataSet));
-        this.dataSet.feedbacks.save(feedback);
+    public String create(final Feedback feedback, @RequestParam final Integer product_id) {
+        feedback.setProduct(ProductController.getProduct(product_id, dataSet));
+        dataSet.feedbacks.save(feedback);
         return "redirect:/feedback";
     }
 
@@ -138,8 +138,8 @@ public class FeedbackController {
      * @param id the id of {@link Feedback}
      */
     @GetMapping("details")
-    public void details(@RequestParam(required = false) Integer id, Model model) {
-        model.addAttribute("model", FeedbackController.getFeedback(id, this.dataSet));
+    public void details(@RequestParam(required = false) final Integer id, final Model model) {
+        model.addAttribute("model", getFeedback(id, dataSet));
     }
 
     /**
@@ -149,9 +149,9 @@ public class FeedbackController {
      * @param id the id of {@link Feedback}
      */
     @GetMapping("edit")
-    public void edit(@RequestParam(required = false) Integer id, Model model) {
-        model.addAttribute("model", FeedbackController.getFeedback(id, this.dataSet));
-        model.addAttribute("products", this.dataSet.products.findAll());
+    public void edit(@RequestParam(required = false) final Integer id, final Model model) {
+        model.addAttribute("model", getFeedback(id, dataSet));
+        model.addAttribute("products", dataSet.products.findAll());
     }
 
     /**
@@ -162,15 +162,15 @@ public class FeedbackController {
      * @param product_id the id of {@link Product}
      */
     @PostMapping("edit")
-    public String edit(Feedback feedback, @RequestParam Integer product_id, Model model) {
+    public String edit(final Feedback feedback, @RequestParam final Integer product_id, final Model model) {
         // check if exists
-        final Feedback feedback1 = FeedbackController.getFeedback(feedback.getId(), this.dataSet);
+        Feedback feedback1 = getFeedback(feedback.getId(), dataSet);
         feedback1.setUserName(feedback.getUserName());
         feedback1.setTime(feedback.getTime());
         feedback1.setContent(feedback.getContent());
-        feedback1.setProduct(ProductController.getProduct(product_id, this.dataSet));
+        feedback1.setProduct(ProductController.getProduct(product_id, dataSet));
         feedback1.setStatus(feedback.getStatus());
-        this.dataSet.feedbacks.save(feedback1);
+        dataSet.feedbacks.save(feedback1);
         return "redirect:/feedback";
     }
 
@@ -181,8 +181,8 @@ public class FeedbackController {
      * @param id the id of {@link Feedback}
      */
     @GetMapping("delete")
-    public void delete(@RequestParam(required = false) Integer id, Model model) {
-        model.addAttribute("model", FeedbackController.getFeedback(id, this.dataSet));
+    public void delete(@RequestParam(required = false) final Integer id, final Model model) {
+        model.addAttribute("model", getFeedback(id, dataSet));
     }
 
     /**
@@ -192,8 +192,8 @@ public class FeedbackController {
      * @param id the id of {@link Feedback}
      */
     @PostMapping("delete")
-    public String deleteConfirmed(@RequestParam int id) {
-        this.dataSet.feedbacks.delete(FeedbackController.getFeedback(id, this.dataSet));
+    public String deleteConfirmed(@RequestParam final int id) {
+        dataSet.feedbacks.delete(getFeedback(id, dataSet));
         return "redirect:/feedback";
     }
 }

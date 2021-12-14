@@ -18,5 +18,11 @@
     <dd class="col-sm-10">[[${s.content}]]</dd>
   </th:block>
 </dl>
+
+<div>
+  <a th:href="@{/}" class="btn btn-primary">返回</a> |
+  <a th:href="@{/{role}/resetPwd(role = ${role}, id = ${id})}" class="btn btn-primary">修改密码</a>
+</div>
+
 </body>
 </html>

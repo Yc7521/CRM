@@ -33,7 +33,7 @@ public class EmployeeController {
      *
      * @param dataSet a {@link DataSet}
      */
-    public EmployeeController(DataSet dataSet, PasswordEncoder passwordEncoder) {
+    public EmployeeController(final DataSet dataSet, final PasswordEncoder passwordEncoder) {
         this.dataSet = dataSet;
         this.passwordEncoder = passwordEncoder;
     }
@@ -45,11 +45,11 @@ public class EmployeeController {
      * @param dataSet data set
      * @throws HttpClientErrorException if {@link Employee} not found
      */
-    static Employee getEmployee(Integer id, DataSet dataSet) {
+    static Employee getEmployee(final Integer id, final DataSet dataSet) {
         if (id == null)
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Employee not found");
 
-        Optional<Employee> employee = dataSet.employees.findById(id);
+        final Optional<Employee> employee = dataSet.employees.findById(id);
         if (employee.isEmpty())
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Employee not found");
 
@@ -63,9 +63,9 @@ public class EmployeeController {
      * @param page a number of page
      */
     @GetMapping({"", "index"})
-    public String index(@RequestParam(defaultValue = "0") int page, Model model) {
-        PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
-        Page<Employee> employeePage = this.dataSet.employees.findAll(id);
+    public String index(@RequestParam(defaultValue = "0") final int page, final Model model) {
+        final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
+        final Page<Employee> employeePage = dataSet.employees.findAll(id);
         model.addAttribute("model", employeePage);
         return "employee/index";
     }
@@ -78,12 +78,12 @@ public class EmployeeController {
      * @param page   a number of page
      */
     @GetMapping("search")
-    public String search(@RequestParam(required = false) String search,
-                         @RequestParam(defaultValue = "0") int page,
-                         Model model) {
+    public String search(@RequestParam(required = false) final String search,
+                         @RequestParam(defaultValue = "0") final int page,
+                         final Model model) {
         if (search.isEmpty()) return "redirect:/employee";
-        PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
-        model.addAttribute("model", this.dataSet.employees.findAllByNameContains(id, search));
+        final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
+        model.addAttribute("model", dataSet.employees.findAllByNameContains(id, search));
         return "employee/index";
     }
 
@@ -92,7 +92,7 @@ public class EmployeeController {
      * mapping to /employee/create?id=0
      */
     @GetMapping("create")
-    public void create(Model model) {
+    public void create(final Model model) {
         model.addAttribute("model", new Employee());
     }
 
@@ -103,9 +103,9 @@ public class EmployeeController {
      * @param employee the {@link Employee}
      */
     @PostMapping("create")
-    public String create(Employee employee) {
-        employee.setPassword(this.passwordEncoder.encode(employee.getPassword()));
-        this.dataSet.employees.save(employee);
+    public String create(final Employee employee) {
+        employee.setPassword(passwordEncoder.encode(employee.getPassword()));
+        dataSet.employees.save(employee);
         return "redirect:/employee";
     }
 
@@ -116,8 +116,8 @@ public class EmployeeController {
      * @param id the id of {@link Employee}
      */
     @GetMapping("details")
-    public void details(@RequestParam(required = false) Integer id, Model model) {
-        model.addAttribute("model", EmployeeController.getEmployee(id, this.dataSet));
+    public void details(@RequestParam(required = false) final Integer id, final Model model) {
+        model.addAttribute("model", getEmployee(id, dataSet));
     }
 
     /**
@@ -127,8 +127,8 @@ public class EmployeeController {
      * @param id the id of {@link Employee}
      */
     @GetMapping("edit")
-    public void edit(@RequestParam(required = false) Integer id, Model model) {
-        model.addAttribute("model", EmployeeController.getEmployee(id, this.dataSet));
+    public void edit(@RequestParam(required = false) final Integer id, final Model model) {
+        model.addAttribute("model", getEmployee(id, dataSet));
     }
 
     /**
@@ -138,14 +138,48 @@ public class EmployeeController {
      * @param employee the {@link Employee}
      */
     @PostMapping("edit")
-    public String edit(Employee employee, Model model) {
+    public String edit(final Employee employee, final Model model) {
         // check if exists
-        final Employee employee1 = EmployeeController.getEmployee(employee.getId(), this.dataSet);
+        Employee employee1 = getEmployee(employee.getId(), dataSet);
         employee1.setName(employee.getName());
         employee1.setDepartment(employee.getDepartment());
         employee1.setSalary(employee.getSalary());
         employee1.setEmployeeType(employee.getEmployeeType());
-        this.dataSet.employees.save(employee1);
+        dataSet.employees.save(employee1);
+        return "redirect:/employee";
+    }
+
+    /**
+     * [GET]
+     * mapping to /employee/resetPwd?id=0
+     *
+     * @param id the id of {@link Employee}
+     */
+    @GetMapping("resetPwd")
+    public void resetPwd(@RequestParam(required = false) final Integer id, final Model model) {
+        model.addAttribute("model", EmployeeController.getEmployee(id, dataSet));
+    }
+
+    /**
+     * [POST]
+     * mapping to /employee/resetPwd
+     *
+     * @param employee the {@link Employee}
+     */
+    @PostMapping("resetPwd")
+    public String resetPwd(final Employee employee,
+                           @RequestParam final String old_password,
+                           final Model model) {
+        // check if exists
+        Employee employee1 = EmployeeController.getEmployee(employee.getId(), dataSet);
+        if (this.passwordEncoder.matches(old_password, employee1.getPassword())) {
+            employee1.setPassword(passwordEncoder.encode(employee.getPassword()));
+            dataSet.employees.save(employee1);
+        } else {
+            model.addAttribute("model", EmployeeController.getEmployee(employee.getId(), dataSet));
+            model.addAttribute("error", "请输入正确的密码");
+            return "employee/resetPwd";
+        }
         return "redirect:/employee";
     }
 
@@ -156,8 +190,8 @@ public class EmployeeController {
      * @param id the id of {@link Employee}
      */
     @GetMapping("delete")
-    public void delete(@RequestParam(required = false) Integer id, Model model) {
-        model.addAttribute("model", EmployeeController.getEmployee(id, this.dataSet));
+    public void delete(@RequestParam(required = false) final Integer id, final Model model) {
+        model.addAttribute("model", getEmployee(id, dataSet));
     }
 
     /**
@@ -167,8 +201,8 @@ public class EmployeeController {
      * @param id the id of {@link Employee}
      */
     @PostMapping("delete")
-    public String deleteConfirmed(@RequestParam int id) {
-        this.dataSet.employees.delete(EmployeeController.getEmployee(id, this.dataSet));
+    public String deleteConfirmed(@RequestParam final int id) {
+        dataSet.employees.delete(getEmployee(id, dataSet));
         return "redirect:/employee";
     }
 }

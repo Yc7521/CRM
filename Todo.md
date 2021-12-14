@@ -17,14 +17,14 @@
 * [x] employee
 * [x] product
 * [x] feedback
-* [ ] plan
-* [ ] cost
+* [x] plan
+* [x] cost
 
 ## Tasks
 
 * [ ] make register view to show "register" page
   * maybe just show "please contact manager if you want to register"
 * [ ] maybe add some test cases
-* [ ] reset password view and controller
+* [x] reset password view and controller
 * [ ] shopping view and controller
 * [ ] add some magic view components to make it look better

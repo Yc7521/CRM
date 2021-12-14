@@ -31,7 +31,7 @@ public class PlanController {
      *
      * @param dataSet a {@link DataSet}
      */
-    public PlanController(DataSet dataSet) {
+    public PlanController(final DataSet dataSet) {
         this.dataSet = dataSet;
     }
 
@@ -42,11 +42,11 @@ public class PlanController {
      * @param dataSet data set
      * @throws HttpClientErrorException if {@link Plan} not found
      */
-    static Plan getPlan(Integer id, DataSet dataSet) {
+    static Plan getPlan(final Integer id, final DataSet dataSet) {
         if (id == null)
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Plan not found");
 
-        Optional<Plan> plan = dataSet.plans.findById(id);
+        final Optional<Plan> plan = dataSet.plans.findById(id);
         if (plan.isEmpty())
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Plan not found");
 
@@ -60,9 +60,9 @@ public class PlanController {
      * @param page a number of page
      */
     @GetMapping({"", "index"})
-    public String index(@RequestParam(defaultValue = "0") int page, Model model) {
-        PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
-        Page<Plan> planPage = this.dataSet.plans.findAll(id);
+    public String index(@RequestParam(defaultValue = "0") final int page, final Model model) {
+        final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
+        final Page<Plan> planPage = dataSet.plans.findAll(id);
         model.addAttribute("model", planPage);
         return "plan/index";
     }
@@ -75,12 +75,12 @@ public class PlanController {
      * @param page   a number of page
      */
     @GetMapping("search")
-    public String search(@RequestParam(required = false) String search,
-                         @RequestParam(defaultValue = "0") int page,
-                         Model model) {
+    public String search(@RequestParam(required = false) final String search,
+                         @RequestParam(defaultValue = "0") final int page,
+                         final Model model) {
         if (search.isEmpty()) return "redirect:/plan";
-        PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
-        model.addAttribute("model", this.dataSet.plans.findAllByClient_Name(id, search));
+        final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
+        model.addAttribute("model", dataSet.plans.findAllByClient_Name(id, search));
         return "plan/index";
     }
 
@@ -92,12 +92,12 @@ public class PlanController {
      * @param page   a number of page
      */
     @GetMapping("searchClientId")
-    public String searchClientId(@RequestParam(required = false) Integer search,
-                                 @RequestParam(defaultValue = "0") int page,
-                                 Model model) {
+    public String searchClientId(@RequestParam(required = false) final Integer search,
+                                 @RequestParam(defaultValue = "0") final int page,
+                                 final Model model) {
         if (search == null) return "redirect:/plan";
-        PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
-        model.addAttribute("model", this.dataSet.plans.findAllByClient_Id(id, search));
+        final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
+        model.addAttribute("model", dataSet.plans.findAllByClient_Id(id, search));
         return "plan/index";
     }
 
@@ -109,12 +109,12 @@ public class PlanController {
      * @param page   a number of page
      */
     @GetMapping("searchEmployeeId")
-    public String searchEmployeeId(@RequestParam(required = false) Integer search,
-                                   @RequestParam(defaultValue = "0") int page,
-                                   Model model) {
+    public String searchEmployeeId(@RequestParam(required = false) final Integer search,
+                                   @RequestParam(defaultValue = "0") final int page,
+                                   final Model model) {
         if (search == null) return "redirect:/plan";
-        PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
-        model.addAttribute("model", this.dataSet.plans.findAllByEmployee_Id(id, search));
+        final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
+        model.addAttribute("model", dataSet.plans.findAllByEmployee_Id(id, search));
         return "plan/index";
     }
 
@@ -126,18 +126,18 @@ public class PlanController {
      * @param employee_id the id of {@link Employee}
      */
     @GetMapping("create")
-    public void create(@RequestParam(required = false) Integer employee_id,
-                       @RequestParam(required = false) Integer client_id,
-                       Model model) {
-        Plan plan = new Plan();
+    public void create(@RequestParam(required = false) final Integer employee_id,
+                       @RequestParam(required = false) final Integer client_id,
+                       final Model model) {
+        final Plan plan = new Plan();
         if (employee_id != null)
-            plan.setEmployee(EmployeeController.getEmployee(employee_id, this.dataSet));
+            plan.setEmployee(EmployeeController.getEmployee(employee_id, dataSet));
         if (client_id != null)
-            plan.setClient(ClientController.getClient(client_id, this.dataSet));
+            plan.setClient(ClientController.getClient(client_id, dataSet));
 
         model.addAttribute("model", plan);
-        model.addAttribute("employees", this.dataSet.employees.findAll());
-        model.addAttribute("clients", this.dataSet.clients.findAll());
+        model.addAttribute("employees", dataSet.employees.findAll());
+        model.addAttribute("clients", dataSet.clients.findAll());
     }
 
     /**
@@ -149,12 +149,12 @@ public class PlanController {
      * @param employee_id the id of {@link Employee}
      */
     @PostMapping("create")
-    public String create(Plan plan,
-                         @RequestParam Integer employee_id,
-                         @RequestParam Integer client_id) {
-        plan.setEmployee(EmployeeController.getEmployee(employee_id, this.dataSet));
-        plan.setClient(ClientController.getClient(client_id, this.dataSet));
-        this.dataSet.plans.save(plan);
+    public String create(final Plan plan,
+                         @RequestParam final Integer employee_id,
+                         @RequestParam final Integer client_id) {
+        plan.setEmployee(EmployeeController.getEmployee(employee_id, dataSet));
+        plan.setClient(ClientController.getClient(client_id, dataSet));
+        dataSet.plans.save(plan);
         return "redirect:/plan";
     }
 
@@ -165,8 +165,8 @@ public class PlanController {
      * @param id the id of {@link Plan}
      */
     @GetMapping("details")
-    public void details(@RequestParam(required = false) Integer id, Model model) {
-        model.addAttribute("model", PlanController.getPlan(id, this.dataSet));
+    public void details(@RequestParam(required = false) final Integer id, final Model model) {
+        model.addAttribute("model", getPlan(id, dataSet));
     }
 
     /**
@@ -176,10 +176,10 @@ public class PlanController {
      * @param id the id of {@link Plan}
      */
     @GetMapping("edit")
-    public void edit(@RequestParam(required = false) Integer id, Model model) {
-        model.addAttribute("model", PlanController.getPlan(id, this.dataSet));
-        model.addAttribute("employees", this.dataSet.employees.findAll());
-        model.addAttribute("clients", this.dataSet.clients.findAll());
+    public void edit(@RequestParam(required = false) final Integer id, final Model model) {
+        model.addAttribute("model", getPlan(id, dataSet));
+        model.addAttribute("employees", dataSet.employees.findAll());
+        model.addAttribute("clients", dataSet.clients.findAll());
     }
 
     /**
@@ -191,18 +191,18 @@ public class PlanController {
      * @param employee_id the id of {@link Employee}
      */
     @PostMapping("edit")
-    public String edit(Plan plan,
-                       @RequestParam Integer employee_id,
-                       @RequestParam Integer client_id,
-                       Model model) {
+    public String edit(final Plan plan,
+                       @RequestParam final Integer employee_id,
+                       @RequestParam final Integer client_id,
+                       final Model model) {
         // check if exists
-        final Plan plan1 = PlanController.getPlan(plan.getId(), this.dataSet);
-        plan1.setEmployee(EmployeeController.getEmployee(employee_id, this.dataSet));
-        plan1.setClient(ClientController.getClient(client_id, this.dataSet));
+        Plan plan1 = getPlan(plan.getId(), dataSet);
+        plan1.setEmployee(EmployeeController.getEmployee(employee_id, dataSet));
+        plan1.setClient(ClientController.getClient(client_id, dataSet));
         plan1.setPlannedProfit(plan.getPlannedProfit());
         plan1.setFinished(plan.getFinished());
         plan1.setPlanState(plan.getPlanState());
-        this.dataSet.plans.save(plan1);
+        dataSet.plans.save(plan1);
         return "redirect:/plan";
     }
 
@@ -213,8 +213,8 @@ public class PlanController {
      * @param id the id of {@link Plan}
      */
     @GetMapping("delete")
-    public void delete(@RequestParam(required = false) Integer id, Model model) {
-        model.addAttribute("model", PlanController.getPlan(id, this.dataSet));
+    public void delete(@RequestParam(required = false) final Integer id, final Model model) {
+        model.addAttribute("model", getPlan(id, dataSet));
     }
 
     /**
@@ -224,8 +224,8 @@ public class PlanController {
      * @param id the id of {@link Plan}
      */
     @PostMapping("delete")
-    public String deleteConfirmed(@RequestParam int id) {
-        this.dataSet.plans.delete(PlanController.getPlan(id, this.dataSet));
+    public String deleteConfirmed(@RequestParam final int id) {
+        dataSet.plans.delete(getPlan(id, dataSet));
         return "redirect:/plan";
     }
 }

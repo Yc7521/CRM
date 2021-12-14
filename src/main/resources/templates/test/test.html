@@ -14,16 +14,14 @@
 <div id="myCarousel" class="carousel slide"
      data-bs-ride="carousel">
   <div class="carousel-indicators">
-    <button type="button" data-bs-target="#myCarousel"
-            data-bs-slide-to="0" class="active" aria-current="true"
-            aria-label="1" onclick="carousel.to(0)"></button>
-    <button type="button" data-bs-target="#myCarousel"
-            data-bs-slide-to="1" aria-label="2"
+    <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" aria-label="1"
+            onclick="carousel.to(0)" aria-current="true" class="active"></button>
+    <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="2"
             onclick="carousel.to(1)"></button>
-    <button type="button" data-bs-target="#myCarousel"
-            data-bs-slide-to="2" aria-label="3"
+    <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" aria-label="3"
             onclick="carousel.to(2)"></button>
   </div>
+
   <div class="carousel-inner">
     <div class="carousel-item active">
       <!-- <img src="..." class="d-block w-100" alt="...">-->
@@ -40,6 +38,7 @@
         <p>Some representative placeholder content for the first slide.</p>
       </div>
     </div>
+
     <div class="carousel-item">
       <svg class="bd-placeholder-img bd-placeholder-img-lg d-block w-100"
            width="800" height="400" xmlns="http://www.w3.org/2000/svg"
@@ -69,15 +68,14 @@
       </div>
     </div>
   </div>
-  <button class="carousel-control-prev" type="button"
-          data-bs-target="#carouselExampleFade" data-bs-slide="prev"
-          onclick="carousel.prev()">
+
+  <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel"
+          data-bs-slide="prev" onclick="carousel.prev()">
     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
     <span class="visually-hidden">Previous</span>
   </button>
-  <button class="carousel-control-next" type="button"
-          data-bs-target="#carouselExampleFade" data-bs-slide="next"
-          onclick="carousel.next()">
+  <button class="carousel-control-next" type="button" data-bs-target="#myCarousel"
+          data-bs-slide="next" onclick="carousel.next()">
     <span class="carousel-control-next-icon" aria-hidden="true"></span>
     <span class="visually-hidden">Next</span>
   </button>

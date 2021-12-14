@@ -31,7 +31,7 @@ public class ProductController {
      *
      * @param dataSet a {@link DataSet}
      */
-    public ProductController(DataSet dataSet) {
+    public ProductController(final DataSet dataSet) {
         this.dataSet = dataSet;
     }
 
@@ -42,11 +42,11 @@ public class ProductController {
      * @param dataSet data set
      * @throws HttpClientErrorException if {@link Product} not found
      */
-    static Product getProduct(Integer id, DataSet dataSet) {
+    static Product getProduct(final Integer id, final DataSet dataSet) {
         if (id == null)
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Product not found");
 
-        Optional<Product> product = dataSet.products.findById(id);
+        final Optional<Product> product = dataSet.products.findById(id);
         if (product.isEmpty())
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Product not found");
 
@@ -60,9 +60,9 @@ public class ProductController {
      * @param page a number of page
      */
     @GetMapping({"", "index"})
-    public String index(@RequestParam(defaultValue = "0") int page, Model model) {
-        PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
-        Page<Product> productPage = this.dataSet.products.findAll(id);
+    public String index(@RequestParam(defaultValue = "0") final int page, final Model model) {
+        final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
+        final Page<Product> productPage = dataSet.products.findAll(id);
         model.addAttribute("model", productPage);
         return "product/index";
     }
@@ -75,12 +75,12 @@ public class ProductController {
      * @param page   a number of page
      */
     @GetMapping("search")
-    public String search(@RequestParam(required = false) String search,
-                         @RequestParam(defaultValue = "0") int page,
-                         Model model) {
+    public String search(@RequestParam(required = false) final String search,
+                         @RequestParam(defaultValue = "0") final int page,
+                         final Model model) {
         if (search.isEmpty()) return "redirect:/product";
-        PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
-        model.addAttribute("model", this.dataSet.products.findAllByNameContains(id, search));
+        final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
+        model.addAttribute("model", dataSet.products.findAllByNameContains(id, search));
         return "product/index";
     }
 
@@ -89,7 +89,7 @@ public class ProductController {
      * mapping to /product/create?id=0
      */
     @GetMapping("create")
-    public void create(Model model) {
+    public void create(final Model model) {
         model.addAttribute("model", new Product());
     }
 
@@ -100,8 +100,8 @@ public class ProductController {
      * @param product the {@link Product}
      */
     @PostMapping("create")
-    public String create(Product product) {
-        this.dataSet.products.save(product);
+    public String create(final Product product) {
+        dataSet.products.save(product);
         return "redirect:/product";
     }
 
@@ -112,8 +112,8 @@ public class ProductController {
      * @param id the id of {@link Product}
      */
     @GetMapping("details")
-    public void details(@RequestParam(required = false) Integer id, Model model) {
-        model.addAttribute("model", ProductController.getProduct(id, this.dataSet));
+    public void details(@RequestParam(required = false) final Integer id, final Model model) {
+        model.addAttribute("model", getProduct(id, dataSet));
     }
 
     /**
@@ -123,8 +123,8 @@ public class ProductController {
      * @param id the id of {@link Product}
      */
     @GetMapping("edit")
-    public void edit(@RequestParam(required = false) Integer id, Model model) {
-        model.addAttribute("model", ProductController.getProduct(id, this.dataSet));
+    public void edit(@RequestParam(required = false) final Integer id, final Model model) {
+        model.addAttribute("model", getProduct(id, dataSet));
     }
 
     /**
@@ -134,14 +134,14 @@ public class ProductController {
      * @param product the {@link Product}
      */
     @PostMapping("edit")
-    public String edit(Product product, Model model) {
+    public String edit(final Product product, final Model model) {
         // check if exists
-        final Product product1 = ProductController.getProduct(product.getId(), this.dataSet);
+        Product product1 = getProduct(product.getId(), dataSet);
         product1.setName(product.getName());
         product1.setTime(product.getTime());
         product1.setType(product.getType());
         product1.setPrice(product.getPrice());
-        this.dataSet.products.save(product1);
+        dataSet.products.save(product1);
         return "redirect:/product";
     }
 
@@ -152,8 +152,8 @@ public class ProductController {
      * @param id the id of {@link Product}
      */
     @GetMapping("delete")
-    public void delete(@RequestParam(required = false) Integer id, Model model) {
-        model.addAttribute("model", ProductController.getProduct(id, this.dataSet));
+    public void delete(@RequestParam(required = false) final Integer id, final Model model) {
+        model.addAttribute("model", getProduct(id, dataSet));
     }
 
     /**
@@ -163,8 +163,8 @@ public class ProductController {
      * @param id the id of {@link Product}
      */
     @PostMapping("delete")
-    public String deleteConfirmed(@RequestParam int id) {
-        this.dataSet.products.delete(ProductController.getProduct(id, this.dataSet));
+    public String deleteConfirmed(@RequestParam final int id) {
+        dataSet.products.delete(getProduct(id, dataSet));
         return "redirect:/product";
     }
 }
