@@ -64,7 +64,8 @@ public class CostController {
      * @param page a number of page
      */
     @GetMapping({"", "index"})
-    public String index(@RequestParam(defaultValue = "0") final int page, final Model model) {
+    public String index(@RequestParam(defaultValue = "0") final int page,
+                        final Model model) {
         final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
         final Page<Cost> costPage = dataSet.costs.findAll(id);
         model.addAttribute("model", costPage);
@@ -109,12 +110,78 @@ public class CostController {
 
     /**
      * [GET]
+     * mapping to /cost/searchUnhandled?page=0
+     *
+     * @param page a number of page
+     */
+    @GetMapping("searchUnhandled")
+    public String searchUnhandled(@RequestParam(defaultValue = "0") final int page,
+                                  final Model model) {
+        final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
+        model.addAttribute("model", dataSet.costs.findAllByEmployee_Name(id, "Anonymous"));
+        return "cost/index";
+    }
+
+    /**
+     * [GET]
+     * mapping to /cost/handle?id=0
+     *
+     * @param id the id of {@link Cost}
+     */
+    @GetMapping("handle")
+    public void handle(@RequestParam(required = false) final Integer id,
+                       final Model model) throws Exception {
+        final Cost cost = getCost(id, dataSet);
+        final Object principal = SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if (principal instanceof Employee employee) {
+            cost.setEmployee(employee);
+        } else {
+            throw new Exception("Employee not found");
+        }
+
+        model.addAttribute("model", cost);
+    }
+
+    /**
+     * [POST]
+     * mapping to /cost/handle?id=0
+     *
+     * @param id the id of {@link Cost}
+     */
+    @PostMapping("handle")
+    public String handleConfirmed(@RequestParam(
+            required = false) final Integer id) throws Exception {
+        final Cost cost = getCost(id, dataSet);
+        final Object principal = SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if (principal instanceof Employee employee) {
+            cost.setEmployee(EmployeeController.getEmployee(employee.getId(), dataSet));
+        } else {
+            throw new Exception("Employee not found");
+        }
+        // dec num here when it is confirmed.
+        final Product product = cost.getProduct();
+        if (product.getNum() > 0) {
+            product.decNum();
+        } else {
+            throw new Exception("Product num is not enough");
+        }
+        cost.setProduct(dataSet.products.save(product));
+        dataSet.costs.save(cost);
+        return "redirect:/cost";
+    }
+
+
+    /**
+     * [GET]
      * mapping to /cost/create?id=0
      *
      * @param id the id of {@link Product}
      */
     @GetMapping("create")
-    public void create(@RequestParam(required = false) final Integer id, final Model model) {
+    public void create(@RequestParam(required = false) final Integer id,
+                       final Model model) {
         final Cost cost = new Cost();
         // get a user who is logged in
         final Object principal = SecurityContextHolder.getContext().getAuthentication()
@@ -161,7 +228,8 @@ public class CostController {
      * @param id the id of {@link Cost}
      */
     @GetMapping("details")
-    public void details(@RequestParam(required = false) final Integer id, final Model model) {
+    public void details(@RequestParam(required = false) final Integer id,
+                        final Model model) {
         final Cost cost1 = getCost(id, dataSet);
         model.addAttribute("model", cost1);
     }
@@ -173,7 +241,8 @@ public class CostController {
      * @param id the id of {@link Cost}
      */
     @GetMapping("edit")
-    public void edit(@RequestParam(required = false) final Integer id, final Model model) {
+    public void edit(@RequestParam(required = false) final Integer id,
+                     final Model model) {
         final Cost cost = getCost(id, dataSet);
         model.addAttribute("model", cost);
         model.addAttribute("clients", dataSet.clients.findAll());
@@ -213,7 +282,8 @@ public class CostController {
      * @param id the id of {@link Cost}
      */
     @GetMapping("delete")
-    public void delete(@RequestParam(required = false) final Integer id, final Model model) {
+    public void delete(@RequestParam(required = false) final Integer id,
+                       final Model model) {
         model.addAttribute("model", getCost(id, dataSet));
     }
 

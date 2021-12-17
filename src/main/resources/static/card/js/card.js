@@ -12,7 +12,10 @@ var MyCards = {
             card.className = `card overflow-hidden m-5 shadow d-flex justify-content-center`;
         });
         parent.querySelectorAll(".card .content").forEach(function (content) {
-            content.className = `content text-center p-4 text-white`;
+            content.className = `content text-center p-4 text-dark w-100`;
+        });
+        parent.querySelectorAll(".card .bg").forEach(function (content) {
+            content.className = `bg text-center p-4 text-dark w-100`;
         });
         if (replaceANode) {
             parent.querySelectorAll(".card .content a").forEach(function (a) {
@@ -20,7 +23,7 @@ var MyCards = {
             });
         }
         VanillaTilt.init(cards, {
-            max: 25,
+            max: 15,
             speed: 400
         });
     }

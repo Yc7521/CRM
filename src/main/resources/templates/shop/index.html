@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh" th:replace="~{shared/layout.html :: layout('列表', ~{::body}, ~{})}"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<link rel="stylesheet" href="/static/card/css/card.css">
+<body>
+<script src="/static/card/js/vanilla-tilt.min.js"></script>
+<script src="/static/card/js/card.js"></script>
+<div th:replace="~{shared/search.html :: search('shop', 'search')}">
+</div>
+<h1>列表</h1>
+<hr>
+<div id="cards">
+  <div class="card" th:each="s: ${model}">
+    <div class="bg">
+      <p>[[${s.name}]]</p>
+    </div>
+    <div class="content">
+      <h2>[[${s.type}]]</h2>
+      <h3>[[${s.name}]]</h3>
+      <p>
+        价格: [[${s.price}]]
+        <br/>
+        库存: [[${s.num}]]
+      </p>
+      <a th:href="@{/shop/details(id=${s.id})}">read more</a>
+    </div>
+  </div>
+</div>
+<div th:replace="shared/pagination.html :: page(${model})"></div>
+<script>
+  MyCards.init(document.getElementById("cards"), true);
+</script>
+</body>
+</html>

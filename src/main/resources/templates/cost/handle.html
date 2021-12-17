@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh" th:replace="~{shared/layout.html :: layout('删除', ~{::body}, ~{})}">
+
+<body>
+  <h1>确认订单</h1>
+
+  <h3>你确定要确认该订单吗?</h3>
+  <div>
+    <h4>订单</h4>
+    <hr />
+    <dl class="row">
+      <dt class="col-sm-2">客户</dt>
+      <dd class="col-sm-10">[[${model.client?.name}]]</dd>
+      <dt class="col-sm-2">消费时间</dt>
+      <dd class="col-sm-10">[[${model.time}]]</dd>
+      <dt class="col-sm-2">产品编号</dt>
+      <dd class="col-sm-10">[[${model.product?.id}]]</dd>
+      <dt class="col-sm-2">产品</dt>
+      <dd class="col-sm-10">[[${model.product?.name}]]</dd>
+    </dl>
+
+    <form action="/cost/handle" method="post">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+      <input type="hidden" id="id" name="id" th:value="${model.id}" />
+      <input type="submit" value="确认订单" class="btn btn-danger" /> |
+      <a th:href="@{/cost}">返回列表</a>
+    </form>
+  </div>
+</body>
+
+</html>

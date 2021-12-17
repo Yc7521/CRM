@@ -59,8 +59,7 @@ class CrmApplicationTests {
         assert principal instanceof UserDetails;
         final UserDetails user = (UserDetails) principal;
         assert user.getUsername().equals("test");
-        assert user.getAuthorities()
-                .contains(new SimpleGrantedAuthority(roles[0]));
+        assert user.getAuthorities().contains(new SimpleGrantedAuthority(roles[0]));
     }
 
     @Test
@@ -76,4 +75,24 @@ class CrmApplicationTests {
         }
     }
 
+    @Test
+    void addAnonymous() {
+        if (dataSet.employees.findManagerByName("Anonymous") == null) {
+            final Employee employee = new Employee();
+            employee.setName("Anonymous");
+            employee.setPassword(passwordEncoder.encode("pass"));
+            employee.setDepartment("Anonymous");
+            employee.setEmployeeType(EmployeeType.MANAGER);
+            employee.setSalary(.0);
+            dataSet.employees.save(employee);
+        }
+        if (dataSet.clients.findByName("Anonymous") == null) {
+            final Client client = new Client();
+            client.setName("Anonymous");
+            client.setPassword(passwordEncoder.encode("pass"));
+            client.setCredit(0);
+            client.setTel("0");
+            dataSet.clients.save(client);
+        }
+    }
 }

@@ -23,7 +23,7 @@
         <div class="form-group">
           <label for="product_id" class="control-label">产品编号</label>
           <select id="product_id" name="product_id" type="text" class="form-control" th:value="${{model.product?.id}}" required >
-            <option th:each="s:${products}" th:value="${s.id}">[[${s.name}]]</option>
+            <option th:each="s:${products}" th:value="${s.id}">[[${s.id}]]</option>
           </select>
         </div>
         <div class="form-group">

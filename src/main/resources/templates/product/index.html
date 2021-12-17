@@ -19,6 +19,7 @@
     <th>生产时间</th>
     <th>类别</th>
     <th>价格</th>
+    <th>库存</th>
     <th sec:authorize="hasAuthority('manager')"></th>
   </tr>
   </thead>
@@ -28,6 +29,7 @@
     <td>[[${s.time}]]</td>
     <td>[[${s.type}]]</td>
     <td>[[${s.price}]]</td>
+    <td>[[${s.num}]]</td>
     <td sec:authorize="hasAuthority('manager')">
       <a th:href="@{/product/edit(id=${s.id})}">编辑</a> |
       <a th:href="@{/product/details(id=${s.id})}">详情</a> |

@@ -1,40 +1,44 @@
 <!DOCTYPE html>
-<html lang="zh" th:replace="~{shared/layout.html :: layout('列表', ~{::body}, ~{})}" xmlns:th="http://www.thymeleaf.org"
-  xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html lang="zh" th:replace="~{shared/layout.html :: layout('列表', ~{::body}, ~{})}"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 
 <body>
-  <div th:replace="~{shared/search.html :: search('cost', 'search')}">
-  </div>
+<div th:replace="~{shared/search.html :: search('cost', 'search')}">
+</div>
 
-  <h1>列表</h1>
-  <p>
-    <a href="/cost/create" sec:authorize="hasAuthority('manager')">创建</a>
-  </p>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>客户编号</th>
-        <th>消费时间</th>
-        <th>产品编号</th>
-        <th>员工编号</th>
-        <th sec:authorize="hasAuthority('manager')"></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr th:each="s:${model}">
-        <td>[[${s.client?.name}]]</td>
-        <td>[[${s.time}]]</td>
-        <td>[[${s.product?.name}]]</td>
-        <td>[[${s.employee?.name}]]</td>
-        <td sec:authorize="hasAuthority('manager')">
-          <a th:href="@{/cost/edit(id=${s.id})}">编辑</a> |
-          <a th:href="@{/cost/details(id=${s.id})}">详情</a> |
-          <a th:href="@{/cost/delete(id=${s.id})}">删除</a>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <div th:replace="shared/pagination.html :: page(${model})"></div>
+<h1>列表</h1>
+<p>
+  <a href="/cost/create">创建</a> |
+  <a href="/cost/searchUnhandled">未处理的订单</a>
+</p>
+<table class="table">
+  <thead>
+  <tr>
+    <th>客户编号</th>
+    <th>消费时间</th>
+    <th>产品编号</th>
+    <th>员工编号</th>
+    <th sec:authorize="hasAuthority('employee')"></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="s:${model}">
+    <td>[[${s.client?.name}]]</td>
+    <td>[[${s.time}]]</td>
+    <td>[[${s.product?.name}]]</td>
+    <td>[[${s.employee?.name}]]</td>
+    <td sec:authorize="hasAuthority('employee')">
+      <th:block sec:authorize="hasAuthority('manager')">
+        <a th:href="@{/cost/edit(id=${s.id})}">编辑</a> |
+      </th:block>
+      <a th:href="@{/cost/details(id=${s.id})}">详情</a> |
+      <a th:href="@{/cost/delete(id=${s.id})}">删除</a>
+    </td>
+  </tr>
+  </tbody>
+</table>
+<div th:replace="shared/pagination.html :: page(${model})"></div>
 </body>
 
 </html>

@@ -2,59 +2,60 @@
 <html lang="zh" th:replace="~{shared/layout.html :: layout('创建', ~{::body}, ~{})}">
 
 <body>
-  <h1>创建</h1>
-  <h4>反馈</h4>
-  <hr />
-  <div class="row">
-    <div class="col-md-4">
-      <form id="form" action="/feedback/create" method="post">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-        <div class="form-group">
-          <label for="userName" class="control-label">反馈人</label>
-          <input id="userName" name="userName" type="text" class="form-control"
-                 th:value="${model.userName}" required/>
-        </div>
-        <div class="form-group">
-          <label for="time" class="control-label">反馈时间</label>
-          <input id="time" name="time" type="date" class="form-control"
-                 alt="请输入生产时间" th:value="${{model.time}}"
-                 required/>
-        </div>
-        <div class="form-group">
-          <label for="content" class="control-label">内容</label>
-          <textarea id="content" name="content" type="textarea"
-                    class="form-control" th:value="${model.content}"
-                    required></textarea>
-        </div>
-        <div class="form-group">
-          <label for="product_id" class="control-label">产品</label>
-          <select id="product_id" name="product_id" class="form-control"
-                  th:value="${model.product?.id}" required>
-            <option th:each="s:${products}" th:value="${s.id}">[[${s.name}]]</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="status" class="control-label">状态</label>
-          <select id="status" name="status" class="form-control"
-                  th:value="${model.status}" required>
-            <option value="PENDING" selected>待办</option>
-            <option value="APPROVED">解决</option>
-            <option value="REJECTED">拒绝</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <input type="submit" value="创建" class="btn btn-primary" />
-        </div>
-        <script>
-          $(function () {
-            $("#time").val("[[${{model.time}}]]");
-            $("#product_id").val("[[${model.product?.id}]]");
-            $("#status").val("[[${model.status}]]");
-          });
-        </script>
-      </form>
-    </div>
+<h1>创建</h1>
+<h4>反馈</h4>
+<hr/>
+<div class="row">
+  <div class="col-md-4">
+    <form id="form" action="/feedback/create" method="post">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+      <div class="form-group">
+        <label for="userName" class="control-label">反馈人</label>
+        <input id="userName" name="userName" type="text" class="form-control"
+               th:value="${model.userName}" required/>
+      </div>
+      <div class="form-group">
+        <label for="time" class="control-label">反馈时间</label>
+        <input id="time" name="time" type="date" class="form-control"
+               alt="请输入生产时间" th:value="${{model.time}}"
+               required readonly/>
+      </div>
+      <div class="form-group">
+        <label for="content" class="control-label">内容</label>
+        <textarea id="content" name="content" type="textarea"
+                  class="form-control" th:value="${model.content}"
+                  required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="product_id" class="control-label">产品</label>
+        <select id="product_id" name="product_id" class="form-control"
+                th:value="${model.product?.id}" required
+                th:readonly="${param.id!=null?true:false}">
+          <option th:each="s:${products}" th:value="${s.id}">[[${s.name}]]-[[${s.id}]]</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="status" class="control-label">状态</label>
+        <select id="status" name="status" class="form-control"
+                th:value="${model.status}" required readonly>
+          <option value="PENDING" selected>待办</option>
+          <option value="APPROVED">解决</option>
+          <option value="REJECTED">拒绝</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <input type="submit" value="创建" class="btn btn-primary"/>
+      </div>
+      <script>
+        $(function () {
+          $("#time").val("[[${{model.time}}]]");
+          $("#product_id").val("[[${model.product?.id}]]");
+          $("#status").val("[[${model.status}]]");
+        });
+      </script>
+    </form>
   </div>
+</div>
 </body>
 
 </html>

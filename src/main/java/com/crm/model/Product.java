@@ -52,10 +52,15 @@ public class Product {
     private Double price = .0; // set default value: 0
 
     /**
+     * 库存
+     */
+    @Column(name = "num", nullable = false)
+    private Integer num = 0; // set default value: 0
+
+    /**
      * 产品反馈信息
      */
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER,
-            mappedBy = "product")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "product")
     private Set<Feedback> feedbacks = new LinkedHashSet<>();
 
     public Integer getId() {
@@ -96,6 +101,18 @@ public class Product {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public Integer getNum() {
+        return num;
+    }
+
+    public void setNum(Integer num) {
+        this.num = num;
+    }
+
+    public void decNum() {
+        this.num--;
     }
 
     public Set<Feedback> getFeedbacks() {

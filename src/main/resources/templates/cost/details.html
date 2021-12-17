@@ -2,26 +2,31 @@
 <html lang="zh" th:replace="~{shared/layout.html :: layout('详情', ~{::body}, ~{})}">
 
 <body>
-  <h1>详情</h1>
+<h1>详情</h1>
 
-  <div>
-    <h4>订单</h4>
-    <hr />
-    <dl class="row">
-      <dt class="col-sm-2">客户编号</dt>
-      <dd class="col-sm-10">[[${model.client?.name}]]</dd>
-      <dt class="col-sm-2">消费时间</dt>
-      <dd class="col-sm-10">[[${model.time}]]</dd>
-      <dt class="col-sm-2">产品编号</dt>
-      <dd class="col-sm-10">[[${model.product?.name}]]</dd>
-      <dt class="col-sm-2">员工编号</dt>
-      <dd class="col-sm-10">[[${model.employee?.name}]]</dd>
-    </dl>
-  </div>
-  <div>
-    <a th:href="@{/cost/edit(id=${model.id})}">编辑</a> |
-    <a th:href="@{/cost}">返回列表</a>
-  </div>
+<div>
+  <h4>订单</h4>
+  <hr/>
+  <dl class="row">
+    <dt class="col-sm-2">客户编号</dt>
+    <dd class="col-sm-10">[[${model.client?.name}]]</dd>
+    <dt class="col-sm-2">消费时间</dt>
+    <dd class="col-sm-10">[[${model.time}]]</dd>
+    <dt class="col-sm-2">产品编号</dt>
+    <dd class="col-sm-10">[[${model.product?.name}]]</dd>
+    <dt class="col-sm-2">员工编号</dt>
+    <dd class="col-sm-10">[[${model.employee?.name}]]</dd>
+  </dl>
+</div>
+<div>
+  <th:block sec:authorize="hasAuthority('manager')">
+    <a th:href="@{/cost/edit(id=${s.id})}">编辑</a> |
+  </th:block>
+  <th:block th:if="${model.employee?.name?.equals('Anonymous')}">
+    <a th:href="@{/cost/handle(id=${model.id})}">确认订单</a> |
+  </th:block>
+  <a th:href="@{/cost}">返回列表</a>
+</div>
 </body>
 
 </html>

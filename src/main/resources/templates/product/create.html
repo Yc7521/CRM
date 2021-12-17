@@ -33,6 +33,11 @@
                required/>
       </div>
       <div class="form-group">
+        <label for="num" class="control-label">库存</label>
+        <input id="num" name="num" type="number" class="form-control" alt="请输入价格"
+               th:value="${model.num}" required/>
+      </div>
+      <div class="form-group">
         <input type="submit" value="创建" class="btn btn-primary"/>
       </div>
       <script>
