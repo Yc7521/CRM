@@ -10,7 +10,7 @@
 
 <h1>列表</h1>
 <p>
-  <a href="/product/create" sec:authorize="hasAuthority('manager')">创建</a>
+  <a href="/product/create" sec:authorize="hasAuthority('client')">创建</a>
 </p>
 <table class="table">
   <thead>
@@ -20,7 +20,7 @@
     <th>类别</th>
     <th>价格</th>
     <th>库存</th>
-    <th sec:authorize="hasAuthority('manager')"></th>
+    <th sec:authorize="hasAuthority('client')"></th>
   </tr>
   </thead>
   <tbody>
@@ -30,7 +30,7 @@
     <td>[[${s.type}]]</td>
     <td>[[${s.price}]]</td>
     <td>[[${s.num}]]</td>
-    <td sec:authorize="hasAuthority('manager')">
+    <td sec:authorize="hasAuthority('client')">
       <a th:href="@{/product/edit(id=${s.id})}">编辑</a> |
       <a th:href="@{/product/details(id=${s.id})}">详情</a> |
       <a th:href="@{/product/delete(id=${s.id})}">删除</a>

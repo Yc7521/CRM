@@ -120,7 +120,7 @@ public class HomeController {
             list.add(new InfoModel("姓名", employee.getName()));
             list.add(new InfoModel("部门", employee.getDepartment()));
             list.add(new InfoModel("薪水", employee.getSalary()));
-            list.add(new InfoModel("类别", employee.getEmployeeType().getDes()));
+//            list.add(new InfoModel("类别", employee.getEmployeeType().getDes()));
             result.addAttribute("role", "employee");
         } else throw new IllegalStateException("非法用户: " + user);
         result.addAttribute("model", list);

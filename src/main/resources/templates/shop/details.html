@@ -24,7 +24,9 @@
 <div>
   <a th:href="@{/feedback/create(id=${model.id})}">添加反馈</a> |
   <a th:href="@{/feedback/searchId(search=${model.id})}">反馈信息</a> |
-  <a th:href="@{/shop/buy(id=${model.id})}">购买</a> |
+  <th:block sec:authorize="!hasAuthority('employee')">
+    <a th:href="@{/shop/buy(id=${model.id})}">购买</a> |
+  </th:block>
   <a th:href="@{/shop}">返回列表</a>
 </div>
 </body>

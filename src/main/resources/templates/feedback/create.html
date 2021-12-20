@@ -30,11 +30,14 @@
         <label for="product_id" class="control-label">产品</label>
         <select id="product_id" name="product_id" class="form-control"
                 th:value="${model.product?.id}" required
-                th:readonly="${param.id!=null?true:false}">
-          <option th:each="s:${products}" th:value="${s.id}">[[${s.name}]]-[[${s.id}]]</option>
+                th:readonly="${param.id!=null}">
+          <option th:each="s:${products}" th:value="${s.id}"
+                  th:if="${param.id==null || param.id[0]==#strings.toString(s.id)}">
+            [[${s.name}]]-[[${s.id}]]
+          </option>
         </select>
       </div>
-      <div class="form-group">
+      <div class="form-group" th:classappend="${param.id!=null}? ' d-none'">
         <label for="status" class="control-label">状态</label>
         <select id="status" name="status" class="form-control"
                 th:value="${model.status}" required readonly>

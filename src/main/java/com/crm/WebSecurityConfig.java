@@ -32,17 +32,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // TODO: to use antMatchers to set roles authorization
-        http.authorizeRequests().antMatchers("/**").permitAll()
-                // .antMatchers("/", "/shared/**", "/error/**", "/home", "/login*", "/static/**").permitAll()
-                // .antMatchers("/student", "/student/index", "/student/search").hasAnyAuthority(stu)
-                // .antMatchers("/student/**").hasAnyAuthority(tea)
-                // .antMatchers("/course/**").hasAnyAuthority(stu)
-                // .antMatchers("/score", "/score/index", "/score/search").hasAnyAuthority(stu)
-                // .antMatchers("/score/**").hasAnyAuthority(tea)
-                // .antMatchers("/teacher", "/teacher/index", "/teacher/search").hasAnyAuthority(tea)
-                // .antMatchers("/teacher/**").hasAnyAuthority(admin)
-                // .antMatchers("/admin/**").hasAnyAuthority(admin)
-                .anyRequest().authenticated().and().exceptionHandling()
+        http
+            .authorizeRequests()
+//                .antMatchers("/**").permitAll()
+                .antMatchers("/*", "/shared/**", "/error/**", "/login*", "/static/**", "/static/img/**")
+                    .permitAll()
+                .antMatchers("/shop/**", "/feedback/create", "/feedback/searchId", "/cost/searchClientId", "/cost/searchUnhandled")
+                    .hasAuthority(Data.roles[0])
+                .antMatchers("/client/index", "/plan/index")
+                    .hasAuthority(Data.roles[1])
+                .antMatchers("/cost/edit", "/cost/delete")
+                    .hasAuthority(Data.roles[2])
+                .antMatchers("/cost/**", "/product/**", "/feedback/**")
+                    .hasAuthority(Data.roles[1])
+                .anyRequest().hasAuthority(Data.roles[2])
+            .and()
+                .exceptionHandling()
                 .accessDeniedPage("/error/404").and();
     }
 

@@ -3,7 +3,7 @@
   xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 
 <body>
-  <div th:replace="~{shared/search.html :: search('feedback', 'search')}">
+  <div sec:authorize="hasAuthority('employee')" th:replace="~{shared/search.html :: search('feedback', 'search')}">
   </div>
 
   <h1>列表</h1>
@@ -18,7 +18,7 @@
         <th>内容</th>
         <th>产品</th>
         <th>状态</th>
-        <th sec:authorize="hasAuthority('manager')"></th>
+        <th sec:authorize="hasAuthority('employee')"></th>
       </tr>
     </thead>
     <tbody>
@@ -28,9 +28,11 @@
         <td>[[${s.content}]]</td>
         <td>[[${s.product?.name}]]</td>
         <td>[[${s.status}]]</td>
-        <td sec:authorize="hasAuthority('manager')">
-          <a th:href="@{/feedback/edit(id=${s.id})}">编辑</a> |
-          <a th:href="@{/feedback/details(id=${s.id})}">详情</a> |
+        <td sec:authorize="hasAuthority('employee')">
+          <th:block sec:authorize="hasAuthority('manager')">
+            <a th:href="@{/feedback/edit(id=${s.id})}">编辑</a> |
+            <a th:href="@{/feedback/details(id=${s.id})}">详情</a> |
+          </th:block>
           <a th:href="@{/feedback/delete(id=${s.id})}">删除</a>
         </td>
       </tr>

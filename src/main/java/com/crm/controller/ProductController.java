@@ -60,7 +60,8 @@ public class ProductController {
      * @param page a number of page
      */
     @GetMapping({"", "index"})
-    public String index(@RequestParam(defaultValue = "0") final int page, final Model model) {
+    public String index(@RequestParam(defaultValue = "0") final int page,
+                        final Model model) {
         final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
         final Page<Product> productPage = dataSet.products.findAll(id);
         model.addAttribute("model", productPage);
@@ -112,7 +113,8 @@ public class ProductController {
      * @param id the id of {@link Product}
      */
     @GetMapping("details")
-    public void details(@RequestParam(required = false) final Integer id, final Model model) {
+    public void details(@RequestParam(required = false) final Integer id,
+                        final Model model) {
         model.addAttribute("model", getProduct(id, dataSet));
     }
 
@@ -123,7 +125,8 @@ public class ProductController {
      * @param id the id of {@link Product}
      */
     @GetMapping("edit")
-    public void edit(@RequestParam(required = false) final Integer id, final Model model) {
+    public void edit(@RequestParam(required = false) final Integer id,
+                     final Model model) {
         model.addAttribute("model", getProduct(id, dataSet));
     }
 
@@ -141,6 +144,7 @@ public class ProductController {
         product1.setTime(product.getTime());
         product1.setType(product.getType());
         product1.setPrice(product.getPrice());
+        product1.setNum(product.getNum());
         dataSet.products.save(product1);
         return "redirect:/product";
     }
@@ -152,7 +156,8 @@ public class ProductController {
      * @param id the id of {@link Product}
      */
     @GetMapping("delete")
-    public void delete(@RequestParam(required = false) final Integer id, final Model model) {
+    public void delete(@RequestParam(required = false) final Integer id,
+                       final Model model) {
         model.addAttribute("model", getProduct(id, dataSet));
     }
 

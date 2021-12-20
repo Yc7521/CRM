@@ -4,13 +4,20 @@
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 
 <body>
-<div th:replace="~{shared/search.html :: search('cost', 'search')}">
+<div sec:authorize="hasAuthority('employee')"
+     th:replace="~{shared/search.html :: search('cost', 'search')}">
 </div>
 
 <h1>列表</h1>
 <p>
-  <a href="/cost/create">创建</a> |
-  <a href="/cost/searchUnhandled">未处理的订单</a>
+  <th:block sec:authorize="hasAuthority('employee')">
+    <a href="/cost/create">创建</a> |
+    <a href="/cost/searchUnhandled">未处理的订单</a>
+  </th:block>
+  <th:block sec:authorize="!hasAuthority('employee')">
+    <a th:href="@{/cost/searchClientId(search = ${id})}">订单</a>
+    <a th:href="@{/cost/searchUnhandled(search = ${id})}">未处理的订单</a>
+  </th:block>
 </p>
 <table class="table">
   <thead>
@@ -32,8 +39,10 @@
       <th:block sec:authorize="hasAuthority('manager')">
         <a th:href="@{/cost/edit(id=${s.id})}">编辑</a> |
       </th:block>
-      <a th:href="@{/cost/details(id=${s.id})}">详情</a> |
-      <a th:href="@{/cost/delete(id=${s.id})}">删除</a>
+      <a th:href="@{/cost/details(id=${s.id})}">详情</a>
+      <th:block sec:authorize="hasAuthority('manager')">
+        | <a th:href="@{/cost/delete(id=${s.id})}">删除</a>
+      </th:block>
     </td>
   </tr>
   </tbody>

@@ -20,7 +20,7 @@
 </div>
 <div>
   <th:block sec:authorize="hasAuthority('manager')">
-    <a th:href="@{/cost/edit(id=${s.id})}">编辑</a> |
+    <a th:href="@{/cost/edit(id=${model.id})}">编辑</a> |
   </th:block>
   <th:block th:if="${model.employee?.name?.equals('Anonymous')}">
     <a th:href="@{/cost/handle(id=${model.id})}">确认订单</a> |

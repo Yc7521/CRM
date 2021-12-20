@@ -7,18 +7,23 @@
 <body>
 
 <dl class="row">
-  <dt class="col-sm-2 mb-3">类别</dt>
+  <dt class="col-sm-2 mb-sm-3">个人信息</dt>
   <dd class="col-sm-10">
-    <span sec:authorize="hasAuthority('Admin')">管理员</span>
-    <span sec:authorize="hasAuthority('Teacher')">教师</span>
-    <span sec:authorize="hasAuthority('Student')">学生</span>
+    <span sec:authorize="hasAuthority('client') && !hasAuthority('employee')">客户</span>
+    <span sec:authorize="hasAuthority('employee') && !hasAuthority('manager')">员工</span>
+    <span sec:authorize="hasAuthority('manager')">经理</span>
   </dd>
   <th:block th:each="s:${model}">
-    <dt class="col-sm-2">[[${s.title}]]</dt>
+    <dt class="col-sm-2 mb-sm-3">[[${s.title}]]</dt>
     <dd class="col-sm-10">[[${s.content}]]</dd>
   </th:block>
 </dl>
-
+<div class="mb-sm-3">
+  <a sec:authorize="hasAuthority('client') && !hasAuthority('employee') "
+     th:href="@{/cost/searchClientId(search = ${id})}">购买记录</a>
+  <a sec:authorize="hasAuthority('employee') && !hasAuthority('manager') "
+     th:href="@{/plan/searchEmployeeId(search = ${id})}">计划任务</a>
+</div>
 <div>
   <a th:href="@{/}" class="btn btn-primary">返回</a> |
   <a th:href="@{/{role}/resetPwd(role = ${role}, id = ${id})}" class="btn btn-primary">修改密码</a>

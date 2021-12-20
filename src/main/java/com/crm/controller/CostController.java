@@ -93,6 +93,26 @@ public class CostController {
 
     /**
      * [GET]
+     * mapping to /cost/searchClientId?page=0&search=
+     *
+     * @param search the id of {@link Employee}
+     * @param page   a number of page
+     */
+    @GetMapping("searchClientId")
+    public String searchClientId(@RequestParam(required = false) final Integer search,
+                                 @RequestParam(defaultValue = "0") final int page,
+                                 final Model model) {
+        if (search == null) return "redirect:/cost";
+        final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
+        model.addAttribute("model", dataSet.costs
+                // search by the given client id
+                .findAllByClient_IdAndEmployeeNot(id, search, ShopController.getAnonymousEmployee(dataSet)));
+        model.addAttribute("id", search);
+        return "cost/index";
+    }
+
+    /**
+     * [GET]
      * mapping to /cost/searchEmployeeId?page=0&search=
      *
      * @param search the id of {@link Employee}
@@ -115,10 +135,16 @@ public class CostController {
      * @param page a number of page
      */
     @GetMapping("searchUnhandled")
-    public String searchUnhandled(@RequestParam(defaultValue = "0") final int page,
+    public String searchUnhandled(@RequestParam(required = false) final Integer search,
+                                  @RequestParam(defaultValue = "0") final int page,
                                   final Model model) {
         final PageRequest id = PageRequest.of(page, maxSize, Sort.by("id"));
-        model.addAttribute("model", dataSet.costs.findAllByEmployee_Name(id, "Anonymous"));
+        if (search == null) {
+            model.addAttribute("model", dataSet.costs.findAllByEmployee_Name(id, "Anonymous"));
+        } else {
+            model.addAttribute("id", search);
+            model.addAttribute("model", dataSet.costs.findAllByClient_IdAndEmployee_Name(id, search, "Anonymous"));
+        }
         return "cost/index";
     }
 

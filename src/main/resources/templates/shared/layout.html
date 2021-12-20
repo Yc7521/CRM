@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="/static/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="/static/card/css/card.css" />
   <link rel="stylesheet" href="/static/site.css" />
-  <link rel="icon" th:href="@{/img/favicon.png}" type="image/png" />
+  <link rel="icon" href="/static/img/favicon.png" type="image/png" />
   <script src="/static/jquery/dist/jquery.min.js"></script>
   <script src="/static/bootstrap/dist/js/bootstrap.min.js"></script>
   <script src="/static/site.js"></script>
@@ -21,7 +21,7 @@
       class="navbar bg-opacity-50 navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
       <div class="container-fluid">
         <a href="/">
-          <img th:src="@{/img/favicon.png}" alt="CRM" class="img-fluid opacity-75" style="width: 6em" />
+          <img src="/static/img/favicon.png" alt="CRM" class="img-fluid opacity-75" style="width: 6em" />
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
           aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +44,7 @@
             <li class="nav-item" sec:authorize="hasAuthority('employee')">
               <a class="nav-link text-dark" href="/feedback/index">Feedbacks</a>
             </li>
-            <li class="nav-item" sec:authorize="hasAuthority('employee')">
+            <li class="nav-item" sec:authorize="hasAuthority('manager')">
               <a class="nav-link text-dark" href="/plan/index">Plans</a>
             </li>
             <li class="nav-item" sec:authorize="hasAuthority('employee')">
