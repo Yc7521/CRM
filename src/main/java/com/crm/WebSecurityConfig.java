@@ -39,7 +39,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .permitAll()
                 .antMatchers("/shop/**", "/feedback/create", "/feedback/searchId", "/cost/searchClientId", "/cost/searchUnhandled")
                     .hasAuthority(Data.roles[0])
-                .antMatchers("/client/index", "/plan/index")
+                .antMatchers("/client/index", "/plan/searchEmployeeId")
                     .hasAuthority(Data.roles[1])
                 .antMatchers("/cost/edit", "/cost/delete")
                     .hasAuthority(Data.roles[2])
