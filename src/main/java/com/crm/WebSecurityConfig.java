@@ -35,7 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
             .authorizeRequests()
 //                .antMatchers("/**").permitAll()
-                .antMatchers("/*", "/shared/**", "/error/**", "/login*", "/static/**", "/static/img/**")
+                .antMatchers("/*", "/shared/**", "/error/**", "/login*", "/static/**", "/static/img/**", "/shop/index")
                     .permitAll()
                 .antMatchers("/shop/**", "/feedback/create", "/feedback/searchId", "/cost/searchClientId", "/cost/searchUnhandled")
                     .hasAuthority(Data.roles[0])
@@ -45,7 +45,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .hasAuthority(Data.roles[2])
                 .antMatchers("/cost/**", "/product/**", "/feedback/**")
                     .hasAuthority(Data.roles[1])
-                .anyRequest().hasAuthority(Data.roles[2])
+                .antMatchers("/**").hasAuthority(Data.roles[2])
             .and()
                 .exceptionHandling()
                 .accessDeniedPage("/error/404").and();

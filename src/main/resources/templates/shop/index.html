@@ -7,7 +7,7 @@
 <body>
 <script src="/static/card/js/vanilla-tilt.min.js"></script>
 <script src="/static/card/js/card.js"></script>
-<div th:replace="~{shared/search.html :: search('shop', 'search')}">
+<div sec:authorize="hasAuthority('client')" th:replace="~{shared/search.html :: search('shop', 'search')}">
 </div>
 <h1>列表</h1>
 <hr>
@@ -24,7 +24,7 @@
         <br/>
         库存: [[${s.num}]]
       </p>
-      <a th:href="@{/shop/details(id=${s.id})}">read more</a>
+      <a sec:authorize="hasAuthority('client')" th:href="@{/shop/details(id=${s.id})}">read more</a>
     </div>
   </div>
 </div>

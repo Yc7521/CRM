@@ -11,28 +11,28 @@
       <form action="/employee/edit" method="post">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <input type="hidden" id="id" name="id" th:value="${model.id}" />
-        <div class="form-group">
+        <div class="form-group mb-sm-3">
           <label for="name" class="control-label">姓名</label>
           <input id="name" name="name" type="text" class="form-control" th:value="${model.name}" />
         </div>
-        <div class="form-group">
+        <div class="form-group mb-sm-3">
           <label for="department" class="control-label">部门</label>
           <input id="department" name="department" type="text" class="form-control" alt="请输入正确的部门"
             th:value="${model.department}" />
         </div>
-        <div class="form-group">
+        <div class="form-group mb-sm-3">
           <label for="salary" class="control-label">薪水</label>
           <input id="salary" name="salary" type="number" step="0.01" class="form-control" alt="请输入正确的薪水"
             th:value="${model.salary}" />
         </div>
-        <div class="form-group">
+        <div class="form-group mb-sm-3">
           <label for="employeeType" class="control-label">员工类别</label>
           <select id="employeeType" name="employeeType" class="form-control" th:value="${model.employeeType}">
             <option value="EMPLOYEE">普通员工</option>
             <option value="MANAGER">经理</option>
           </select>
         </div>
-        <div class="form-group">
+        <div class="form-group mb-sm-3">
           <input type="submit" value="保存" class="btn btn-primary" />
         </div>
         <script>

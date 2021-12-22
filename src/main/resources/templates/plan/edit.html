@@ -11,32 +11,32 @@
       <form action="/plan/edit" method="post">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <input type="hidden" id="id" name="id" th:value="${model.id}" />
-        <div class="form-group">
+        <div class="form-group mb-sm-3">
           <label for="employee_id" class="control-label">员工</label>
           <select id="employee_id" name="employee_id" type="text" class="form-control" th:value="${model.employee?.id}" required>
             <option th:each="s:${employees}" th:value="${s.id}">[[${s.name}]]</option>
           </select>
         </div>
-        <div class="form-group">
+        <div class="form-group mb-sm-3">
           <label for="client_id" class="control-label">客户</label>
           <select id="client_id" name="client_id" type="text" class="form-control" th:value="${{model.client?.id}}" required >
             <option th:each="s:${clients}" th:value="${s.id}">[[${s.name}]]</option>
           </select>
         </div>
-        <div class="form-group">
+        <div class="form-group mb-sm-3">
           <label for="plannedProfit" class="control-label">计划利润</label>
           <input id="plannedProfit" name="plannedProfit" type="number" step="0.01" class="form-control" alt="请输入利润" th:value="${model.plannedProfit}"
             required/>
         </div>
-        <div class="form-group">
+        <div class="form-group mb-sm-3">
           <label for="plannedTime" class="control-label">计划完成时间</label>
           <input id="plannedTime" name="plannedTime" type="Date" class="form-control" alt="请输入计划完成时间" required />
         </div>
-        <div class="form-group">
+        <div class="form-group mb-sm-3">
           <label for="finished" class="control-label">是否按时完成</label>
           <input type="checkbox" id="finished" name="finished" class="form-check" th:checked="${model.finished}" />
         </div>
-        <div class="form-group">
+        <div class="form-group mb-sm-3">
           <label for="planState" class="control-label">实施情况</label>
           <select id="planState" name="planState" type="text" class="form-control" th:value="${{model.planState}}" required >
             <option value="IN_PROGRESS">进行中</option>
@@ -44,7 +44,7 @@
             <option value="FAILED">失败了</option>
           </select>
         </div>
-        <div class="form-group">
+        <div class="form-group mb-sm-3">
           <input type="submit" value="保存" class="btn btn-primary" />
         </div>
         <script>

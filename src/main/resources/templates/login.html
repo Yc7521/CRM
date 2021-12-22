@@ -15,18 +15,18 @@
       您已成功注销。
     </div>
 
-    <form class="form-group" th:action="@{/login}" method="post">
-      <div class="form-group">
+    <form class="form-group mb-sm-3" th:action="@{/login}" method="post">
+      <div class="form-group mb-sm-3">
         <label for="username">用户名</label>
         <input class="form-control" placeholder="Username" name="username" id="username"
                type="text" autofocus>
       </div>
-      <div class="form-group">
+      <div class="form-group mb-sm-3">
         <label for="password">密码</label>
         <input class="form-control" placeholder="Password" name="password" id="password"
                type="password" value="">
       </div>
-      <div class="form-group">
+      <div class="form-group mb-sm-3">
         <label for="type">登录类型</label>
         <select class="form-control" name="type" id="type">
           <option value="员工" selected>员工</option>
